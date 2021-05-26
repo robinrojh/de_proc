@@ -55,3 +55,4 @@ class SignUp extends Component {
     axios.defaults.headers.common["Authorization"] = FBIdToken;
   };
 }
+export default SignUp;
