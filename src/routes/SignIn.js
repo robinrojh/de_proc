@@ -20,6 +20,12 @@ class SignIn extends Component {
       errors: {},
     };
   }
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     this.setState({
@@ -30,7 +36,7 @@ class SignIn extends Component {
       password: this.state.password,
     };
     axios
-      .post("/SignIn", userData)
+      .post("/login", userData)
       .then((res) => {
         setAuthorizationHeader(res.data.token);
         this.setState({
@@ -45,12 +51,6 @@ class SignIn extends Component {
           loading: false,
         });
       });
-  };
-
-  handleChange = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
   };
 
   setAuthorizationHeader = (token) => {

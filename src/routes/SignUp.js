@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 // function SignUp(props) {
 //     return (
 //         <div>
@@ -20,6 +21,12 @@ class SignUp extends Component {
       errors: {},
     };
   }
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     this.setState({
@@ -30,6 +37,7 @@ class SignUp extends Component {
       password: this.state.password,
       confirmPassword: this.state.confirmPassword,
       nickname: this.state.handle,
+      authenticated: true,
     };
     axios
       .post("/signup", newUserData)
