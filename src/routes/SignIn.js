@@ -12,6 +12,11 @@ class SignIn extends React.Component {
     };
   }
 
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
   handleSubmit = (event) => {
     event.preventDefault();
     this.setState({
@@ -22,7 +27,7 @@ class SignIn extends React.Component {
       password: this.state.password,
     };
     axios
-      .post("/SignIn", userData)
+      .post("/login", userData)
       .then((res) => {
         this.setAuthorizationHeader(res.data.token);
         this.setState({

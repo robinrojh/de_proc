@@ -12,6 +12,11 @@ class SignUp extends React.Component {
       errors: {},
     };
   }
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
   handleSubmit = (event) => {
     event.preventDefault();
     this.setState({
@@ -21,7 +26,7 @@ class SignUp extends React.Component {
       email: this.state.email,
       password: this.state.password,
       confirmPassword: this.state.confirmPassword,
-      nickname: this.state.handle,
+      nickname: this.state.nickname,
     };
     axios
       .post("/signup", newUserData)
@@ -30,8 +35,9 @@ class SignUp extends React.Component {
         this.setState({
           loading: false,
           errors: null,
+          authenticated: true,
         });
-        this.props.history.push("/List");
+        // this.props.history.push("/");
       })
       .catch((err) => {
         this.setState({
@@ -41,25 +47,6 @@ class SignUp extends React.Component {
       });
   };
 
-  handleChange = (event) => {
-    event.preventDefault();
-    const {
-      target: { name, value },
-    } = event;
-    if (name === "email") {
-      this.setState({
-        email: value,
-      });
-    } else if (name === "password") {
-      this.setState({
-        password: value,
-      });
-    } else if (name === "nickname") {
-      this.setState({
-        nickname: value,
-      });
-    }
-  };
   setAuthorizationHeader = (token) => {
     const FBIdToken = `Bearer ${token}`;
     localStorage.setItem("FBIdToken", FBIdToken);
@@ -83,6 +70,14 @@ class SignUp extends React.Component {
           placeholder="Password"
           required
           value={this.state.password}
+          onChange={this.handleChange}
+        ></input>
+        <input
+          name="confirmPassword"
+          type="confirmPassword"
+          placeholder="Confirm Password"
+          required
+          value={this.state.confirmPassword}
           onChange={this.handleChange}
         ></input>
         <input
