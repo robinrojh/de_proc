@@ -1,16 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
+import axios from 'axios';
 
-// function SignIn(props) {
-//     return (
-//         <div>
-//             SignIn Page!
-//         </div>
-//     )
-// }
-
-// export default SignIn;
-
-class SignIn extends Component {
+class SignIn extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -30,9 +21,9 @@ class SignIn extends Component {
       password: this.state.password,
     };
     axios
-      .post("/SignIn", userData)
+      .post("/login", userData)
       .then((res) => {
-        setAuthorizationHeader(res.data.token);
+        this.setAuthorizationHeader(res.data.token);
         this.setState({
           loading: false,
           authenticated: true,
