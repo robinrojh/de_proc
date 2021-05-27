@@ -1,16 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
+import axios from "axios";
 
-// function SignIn(props) {
-//     return (
-//         <div>
-//             SignIn Page!
-//         </div>
-//     )
-// }
-
-// export default SignIn;
-
-class SignIn extends Component {
+class SignIn extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -20,11 +11,6 @@ class SignIn extends Component {
       errors: {},
     };
   }
-  handleChange = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
-  };
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -36,9 +22,9 @@ class SignIn extends Component {
       password: this.state.password,
     };
     axios
-      .post("/login", userData)
+      .post("/SignIn", userData)
       .then((res) => {
-        setAuthorizationHeader(res.data.token);
+        this.setAuthorizationHeader(res.data.token);
         this.setState({
           loading: false,
           authenticated: true,

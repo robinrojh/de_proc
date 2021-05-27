@@ -1,11 +1,13 @@
+import { Link } from "react-router-dom";
+
 function Home(props) {
     return (
         <div>
             Home page!
-            <button name="About" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><link to="/about">About</link></button>
-            <button name="SignIn" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><link to="/signin">Sign In</link></button>
-            <button name="SignUp" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><link to="/signup">Sign Up</link></button>
-            <button name="List" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><link to="/lists">About</link></button>
+            <button name="About" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/about">About</Link></button>
+            <button name="SignIn" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/signin">Sign In</Link></button>
+            <button name="SignUp" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/signup">Sign Up</Link></button>
+            <button name="List" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/lists">About</Link></button>
         </div>
     )
 }
