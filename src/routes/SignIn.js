@@ -34,7 +34,7 @@ class SignIn extends React.Component {
           loading: false,
           authenticated: true,
         });
-        this.props.history.push("/List");
+        this.props.history.push("/");
       })
       .catch((err) => {
         this.setState({
