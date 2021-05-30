@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { authService, dbService } from "../functions/util/fbase";
 
 class SignUp extends React.Component {
   constructor() {
@@ -21,34 +22,45 @@ class SignUp extends React.Component {
   };
 
   // Handles submission of the form
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
     this.setState({
       loading: true,
     });
-    const newUserData = {
-      email: this.state.email,
-      password: this.state.password,
-      confirmPassword: this.state.confirmPassword,
-      nickname: this.state.nickname,
-    };
-    axios
-      .post("/signup", newUserData)
-      .then((res) => {
-        this.setAuthorizationHeader(res.data.token);
-        this.setState({
-          loading: false,
-          errors: null,
-          authenticated: true,
-        });
-        this.props.history.push("/");
-      })
-      .catch((err) => {
-        this.setState({
-          errors: err.response.data,
-          loading: false,
-        });
-      });
+    // const newUserData = {
+    //   email: this.state.email,
+    //   password: this.state.password,
+    //   confirmPassword: this.state.confirmPassword,
+    //   nickname: this.state.nickname,
+    // };
+    try {
+      await authService.createUserWithEmailAndPassword(this.state.email, this.state.password);
+      const userObj = {
+        email: this.state.email,
+        nickname: this.state.nickname
+      }
+      await dbService.collection('users').doc(this.state.email).set(userObj);
+    }
+    catch (error) {
+
+    }
+    // axios
+    //   .post("/signup", newUserData)
+    //   .then((res) => {
+    //     this.setAuthorizationHeader(res.data.token);
+    //     this.setState({
+    //       loading: false,
+    //       errors: null,
+    //       authenticated: true,
+    //     });
+    //     this.props.history.push("/");
+    //   })
+    //   .catch((err) => {
+    //     this.setState({
+    //       errors: err.response.data,
+    //       loading: false,
+    //     });
+    //   });
   };
 
   setAuthorizationHeader = (token) => {

@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { authService } from "../functions/util/fbase";
 
 class SignIn extends React.Component {
   constructor() {
@@ -20,31 +21,17 @@ class SignIn extends React.Component {
   };
 
   // Handles submission of the form
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
     this.setState({
       loading: true,
     });
-    const userData = {
-      email: this.state.email,
-      password: this.state.password,
-    };
-    axios
-      .post("/login", userData)
-      .then((res) => {
-        this.setAuthorizationHeader(res.data.token);
-        this.setState({
-          loading: false,
-          authenticated: true,
-        });
-        this.props.history.push("/list");
-      })
-      .catch((err) => {
-        this.setState({
-          errors: err.response.data,
-          loading: false,
-        });
-      });
+    try {
+      await authService.signInWithEmailAndPassword(this.state.email, this.state.password);
+    }
+    catch (error) {
+
+    }
   };
 
   setAuthorizationHeader = (token) => {

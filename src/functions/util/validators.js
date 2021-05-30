@@ -1,5 +1,3 @@
-import { user } from "firebase-functions/lib/providers/auth";
-
 const isEmpty = (string) => {
   if (string != undefined) {
     if (string.trim() === "") {
@@ -21,7 +19,7 @@ const isEmail = (email) => {
   }
 };
 
-exports.validateSignUpData = (data) => {
+export const validateSignUpData = (data) => {
   let errors = {};
 
   if (isEmpty(data.email)) {
@@ -41,7 +39,7 @@ exports.validateSignUpData = (data) => {
   };
 };
 
-exports.validateLoginData = (data) => {
+export const validateLoginData = (data) => {
   let errors = {};
   if (isEmpty(data.email)) errors.email = "Must not be empty";
   if (isEmpty(data.password)) errors.password = "Must not be empty";

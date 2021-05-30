@@ -17,6 +17,7 @@ const AppRouter = ({ isLoggedIn }) => {
             <>
               {console.log("logged in")}
               <Route exact path="/" component={Home} />
+              <Route exact path="/about" component={About} />
               <Route exact path="/list" component={List} />
             </>
             :

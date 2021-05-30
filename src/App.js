@@ -10,6 +10,7 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
+      console.log(isLoggedIn)
       if (user) {
         setIsLoggedIn(true);
       }
@@ -18,7 +19,7 @@ const App = () => {
       }
       setInit(true);
     })
-  }, [])
+  }, [isLoggedIn])
   return (
     <>
       {init ?
