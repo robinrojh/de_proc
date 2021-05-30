@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { authService } from "../functions/util/fbase";
 
 class List extends React.Component {
     constructor() {
@@ -28,16 +29,15 @@ class List extends React.Component {
             confirmPassword: this.state.confirmPassword,
             nickname: this.state.nickname,
         };
+
         axios
             .post("/work", newWorkData)
             .then((res) => {
-                this.setAuthorizationHeader(res.data.token);
                 this.setState({
                     loading: false,
                     errors: null,
                     authenticated: true,
                 });
-                // this.props.history.push("/");
             })
             .catch((err) => {
                 this.setState({
@@ -50,6 +50,8 @@ class List extends React.Component {
     render = () => {
         return (
             <div>
+                {console.log("list active")}
+                {console.log(authService.currentUser)}
                 <h2>To-do List!</h2>
                 <form onSubmit={this.handleSubmit}>
                     <input

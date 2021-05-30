@@ -37,7 +37,7 @@ class SignIn extends React.Component {
           loading: false,
           authenticated: true,
         });
-        this.props.history.push("/");
+        this.props.history.push("/list");
       })
       .catch((err) => {
         this.setState({
@@ -51,6 +51,29 @@ class SignIn extends React.Component {
     const FBIdToken = `Bearer ${token}`;
     localStorage.setItem("FBIdToken", FBIdToken);
     axios.defaults.headers.common["Authorization"] = FBIdToken;
+  };
+  render = () => {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          required
+          value={this.state.email}
+          onChange={this.handleChange}
+        ></input>
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          required
+          value={this.state.password}
+          onChange={this.handleChange}
+        ></input>
+        <input type="submit" value="Sign In"></input>
+      </form>
+    );
   };
 }
 

@@ -1,10 +1,8 @@
-const { admin, db } = require("../util/admin");
-const config = require("../util/config");
-const firebase = require("firebase");
-const { validateSignUpData, validateLoginData } = require("../util/validators");
-firebase.initializeApp(config);
+// eslint-disable-next-line no-unused-vars
+import { authService, dbService } from "./fbase";
+import { validateSignUpData, validateLoginData } from "../util/validators";
 
-exports.signup = (req, res) => {
+export const signup = (req, res) => {
   const newUser = {
     email: req.body.email,
     password: req.body.password,
@@ -17,11 +15,10 @@ exports.signup = (req, res) => {
   }
 
   let token, userId;
-  db.doc(`/users/${newUser.email}`)
+  dbService.doc(`/users/${newUser.email}`)
     .get()
     .then((doc) => {
-      return firebase
-        .auth()
+      return authService
         .createUserWithEmailAndPassword(newUser.email, newUser.password);
     })
     .then((data) => {
@@ -35,7 +32,7 @@ exports.signup = (req, res) => {
         nickname: newUser.nickname,
         userId,
       };
-      return db.doc(`/users/${newUser.email}`).set(userCredentials);
+      return dbService.doc(`/users/${newUser.email}`).set(userCredentials);
     })
     .then(() => {
       return res.status(201).json({ token });
@@ -52,7 +49,7 @@ exports.signup = (req, res) => {
     });
 };
 
-exports.login = (req, res) => {
+export const login = (req, res) => {
   const user = {
     email: req.body.email,
     password: req.body.password,
@@ -61,8 +58,8 @@ exports.login = (req, res) => {
   if (!valid) {
     return res.status(400).json(errors);
   }
-  firebase
-    .auth()
+  
+  authService
     .signInWithEmailAndPassword(user.email, user.password)
     .then((data) => {
       return data.user.getIdToken();

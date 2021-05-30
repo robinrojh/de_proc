@@ -78,7 +78,7 @@ class SignUp extends React.Component {
         ></input>
         <input
           name="confirmPassword"
-          type="confirmPassword"
+          type="password"
           placeholder="Confirm Password"
           required
           value={this.state.confirmPassword}

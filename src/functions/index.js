@@ -12,7 +12,7 @@ var cors = require("cors");
 const app = require("express")();
 app.use(cors());
 
-aapp.post("/work/:workId/editDescription", FBAuth, editWorkDescription);
+app.post("/work/:workId/editDescription", FBAuth, editWorkDescription);
 app.post("/work/:workId/editDuedate", FBAuth, editdueDate);
 app.get("/work", FBAuth, grabMyWork);
 app.post("/work", FBAuth, addWork);

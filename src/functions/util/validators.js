@@ -1,4 +1,4 @@
-const { user } = require("firebase-functions/lib/providers/auth");
+import { user } from "firebase-functions/lib/providers/auth";
 
 const isEmpty = (string) => {
   if (string != undefined) {

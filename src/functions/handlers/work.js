@@ -1,7 +1,7 @@
-const { db } = require("../util/admin");
+import { dbService } from "../util/fbase";
 
-exports.grabMyWork = (req, res) => {
-  db.collection("work")
+export const grabMyWork = (req, res) => {
+  dbService.collection("work")
     .orderBy("dueDate")
     .where("owner", "==", req.user.email)
     .get()
@@ -19,7 +19,7 @@ exports.grabMyWork = (req, res) => {
     .catch((err) => console.log(err));
 };
 
-exports.addWork = (req, res) => {
+export const addWork = (req, res) => {
   if (req.body.description.trim() === "") {
     return res
       .status(400)
@@ -38,7 +38,7 @@ exports.addWork = (req, res) => {
     ).toISOString(),
     owner: req.user.email,
   };
-  db.collection("work")
+  dbService.collection("work")
     .add(newWork)
     .then((doc) => {
       res.json({ newWork });
@@ -49,13 +49,13 @@ exports.addWork = (req, res) => {
     });
 };
 
-exports.editWorkDescription = (req, res) => {
+export const editWorkDescription = (req, res) => {
   if (req.body.description.trim() === "") {
     return res
       .status(400)
       .json({ description: "Description should not be empty" });
   }
-  const work = db.doc(`/work/${req.params.workId}`);
+  const work = dbService.doc(`/work/${req.params.workId}`);
   work
     .get()
     .then((doc) => {
@@ -85,13 +85,13 @@ exports.editWorkDescription = (req, res) => {
     });
 };
 
-exports.editdueDate = (req, res) => {
+export const editdueDate = (req, res) => {
   if (req.body.dueDate.trim() === "") {
     return res
       .status(400)
       .json({ description: "Due date should not be empty" });
   }
-  const work = db.doc(`/work/${req.params.workId}`);
+  const work = dbService.doc(`/work/${req.params.workId}`);
   work
     .get()
     .then((doc) => {

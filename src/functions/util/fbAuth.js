@@ -1,6 +1,6 @@
-const { admin, db } = require("./admin");
+import { authService, dbService } from "./fbase";
 
-module.exports = (req, res, next) => {
+export const fbAuth = (req, res, next) => {
   let idToken;
   if (
     req.headers.authorization &&
@@ -12,13 +12,12 @@ module.exports = (req, res, next) => {
     return res.status(403).json({ error: "Unauthorized" });
   }
 
-  admin
-    .auth()
+  authService
     .verifyIdToken(idToken)
     .then((decodedToken) => {
       console.log(decodedToken);
       req.user = decodedToken;
-      return db
+      return dbService
         .collection("users")
         .where("userId", "==", req.user.uid)
         .limit(1)
