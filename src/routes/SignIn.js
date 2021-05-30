@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { authService } from "../functions/util/fbase";
 
 class SignIn extends React.Component {
@@ -13,14 +12,20 @@ class SignIn extends React.Component {
     };
   }
 
-  // Handles the change in the form input
+  /**
+   * Handles the change in the sign in form input
+   * @param {event} event refers to the change of state from the input form
+  */ 
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
 
-  // Handles submission of the form
+  /**
+   * Handles the submission of the sign in form
+   * @param {Event} event refers to the event of submission of the form
+  */ 
   handleSubmit = async (event) => {
     event.preventDefault();
     this.setState({
@@ -34,11 +39,6 @@ class SignIn extends React.Component {
     }
   };
 
-  setAuthorizationHeader = (token) => {
-    const FBIdToken = `Bearer ${token}`;
-    localStorage.setItem("FBIdToken", FBIdToken);
-    axios.defaults.headers.common["Authorization"] = FBIdToken;
-  };
   render = () => {
     return (
       <form onSubmit={this.handleSubmit}>

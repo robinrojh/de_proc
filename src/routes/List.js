@@ -1,8 +1,10 @@
 import React from "react";
-import axios from "axios";
 import { authService, dbService } from "../functions/util/fbase";
 import ListEvent from "../components/ListEvent";
 
+/**
+ * This route is a details page for the to-do list selected in the dashboard.
+ */
 class List extends React.Component {
     constructor() {
         super();
@@ -10,10 +12,14 @@ class List extends React.Component {
             title: "",
             description: "",
             eventArray: [],
-            errors: {},
+            eventId: "",
+            errors: {}
         };
     }
 
+    /**
+     * Retrieves work from firestore database given that the user is logged in
+     */
     getMyWorks = () => {
         dbService.collection('users').doc(authService.currentUser.email).collection('works').onSnapshot((snapshot) => {
             const arr = snapshot.docs;
@@ -29,6 +35,7 @@ class List extends React.Component {
 
     // handles the change in state from the work input form
     handleChange = (event) => {
+        event.preventDefault();
         this.setState({
             [event.target.name]: event.target.value,
         });
@@ -37,32 +44,18 @@ class List extends React.Component {
     // handles the addition of new work into the database
     handleSubmit = async (event) => {
         event.preventDefault();
+        // Finds out the document id of the work that will be added next
         const newWorkData = {
             title: this.state.title,
             description: this.state.description,
-            owner: authService.currentUser.email
+            owner: authService.currentUser.email,
         };
-
+        // Adds a new document to the subcollection works in users.
         await dbService.collection('users').doc(authService.currentUser.email).collection('works').add(newWorkData)
         this.setState({
             title: "",
-            description: ""
+            description: "",
         });
-        // axios
-        //     .post("/work", newWorkData)
-        //     .then((res) => {
-        //         this.setState({
-        //             loading: false,
-        //             errors: null,
-        //             authenticated: true,
-        //         });
-        //     })
-        //     .catch((err) => {
-        //         this.setState({
-        //             errors: err.response.data,
-        //             loading: false,
-        //         });
-        //     });
     };
 
     render = () => {
@@ -89,8 +82,7 @@ class List extends React.Component {
                 </form>
                 {this.state.eventArray.map((element) => {
                     key++;
-                    console.log(element.data());
-                    return <ListEvent key={key} title={element.data().title} description={element.data().description} />
+                    return <ListEvent key={key} title={element.data().title} description={element.data().description} workId={element.id} />
                 })}
             </div>
         )

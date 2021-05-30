@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { authService, dbService } from "../functions/util/fbase";
 
 class SignUp extends React.Component {
@@ -61,12 +60,6 @@ class SignUp extends React.Component {
     //       loading: false,
     //     });
     //   });
-  };
-
-  setAuthorizationHeader = (token) => {
-    const FBIdToken = `Bearer ${token}`;
-    localStorage.setItem("FBIdToken", FBIdToken);
-    axios.defaults.headers.common["Authorization"] = FBIdToken;
   };
 
   render = () => {
