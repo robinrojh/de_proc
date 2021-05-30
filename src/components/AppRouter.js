@@ -26,8 +26,8 @@ const AppRouter = ({ isLoggedIn }) => {
               {console.log(authService.currentUser)}
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
-              <AuthRoute exact path="/signin" authenticated={isLoggedIn} component={SignIn} />
-              <AuthRoute exact path="/signup" authenticated={isLoggedIn} component={SignUp} />
+              <Route exact path="/signin" component={SignIn} />
+              <Route exact path="/signup" component={SignUp} />
               {/* <Route exact path="/list" component={List} /> */}
 
             </>
