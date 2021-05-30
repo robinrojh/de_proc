@@ -4,8 +4,6 @@ import About from "../routes/About";
 import List from "../routes/List";
 import SignIn from "../routes/SignIn";
 import SignUp from "../routes/SignUp";
-import AuthRoute from "../util/AuthRoute";
-import { authService } from "../functions/util/fbase"
 
 const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
@@ -15,15 +13,12 @@ const AppRouter = ({ isLoggedIn }) => {
         <Switch>
           {isLoggedIn ?
             <>
-              {console.log("logged in")}
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
               <Route exact path="/list" component={List} />
             </>
             :
             <>
-              {console.log("not logged in")}
-              {console.log(authService.currentUser)}
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
               <Route exact path="/signin" component={SignIn} />

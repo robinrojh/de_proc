@@ -1,6 +1,7 @@
 import React from "react";
 import { authService, dbService } from "../functions/util/fbase";
 import ListEvent from "../components/ListEvent";
+import SignOut from "../components/SignOut";
 
 /**
  * This route is a details page for the to-do list selected in the dashboard.
@@ -62,6 +63,7 @@ class List extends React.Component {
         let key = 0;
         return (
             <div>
+                <SignOut/>
                 <h2>To-do List!</h2>
                 <form onSubmit={this.handleSubmit}>
                     <input
