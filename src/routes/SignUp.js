@@ -12,11 +12,15 @@ class SignUp extends React.Component {
       errors: {},
     };
   }
+
+  // Handles the change in the form input
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
+
+  // Handles submission of the form
   handleSubmit = (event) => {
     event.preventDefault();
     this.setState({
