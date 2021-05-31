@@ -30,11 +30,17 @@ class List extends React.Component {
         })
     }
 
+    /**
+     * React life cycle method to fetch firestore data before the page loads
+     */
     componentDidMount = () => {
         this.getMyWorks();
     }
 
-    // handles the change in state from the work input form
+    /**
+     * Handles the change in the form input
+     * @param {Event} event form input change event
+     */
     handleChange = (event) => {
         event.preventDefault();
         this.setState({
@@ -42,16 +48,17 @@ class List extends React.Component {
         });
     };
 
-    // handles the addition of new work into the database
-    handleSubmit = async (event) => {
+    /**
+     * Asynchronously handles the submission of the form
+     * @param {Event} event form submission event
+     */    handleSubmit = async (event) => {
         event.preventDefault();
-        // Finds out the document id of the work that will be added next
         const newWorkData = {
             title: this.state.title,
             description: this.state.description,
             owner: authService.currentUser.email,
         };
-        // Adds a new document to the subcollection works in users.
+        // Adds a new document to the subcollection works in users. Note: this will change based on the new database structure
         await dbService.collection('users').doc(authService.currentUser.email).collection('works').add(newWorkData)
         this.setState({
             title: "",

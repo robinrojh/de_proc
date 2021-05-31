@@ -13,25 +13,25 @@ class SignUp extends React.Component {
     };
   }
 
-  // Handles the change in the form input
+  /**
+   * Handles the change in the sign up form input
+   * @param {event} event refers to the change of state from the input form
+  */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
 
-  // Handles submission of the form
+  /**
+   * Handles the submission of the sign up form
+   * @param {Event} event refers to the event of submission of the form
+  */
   handleSubmit = async (event) => {
     event.preventDefault();
     this.setState({
       loading: true,
     });
-    // const newUserData = {
-    //   email: this.state.email,
-    //   password: this.state.password,
-    //   confirmPassword: this.state.confirmPassword,
-    //   nickname: this.state.nickname,
-    // };
     try {
       await authService.createUserWithEmailAndPassword(this.state.email, this.state.password);
       const userObj = {
@@ -43,23 +43,6 @@ class SignUp extends React.Component {
     catch (error) {
 
     }
-    // axios
-    //   .post("/signup", newUserData)
-    //   .then((res) => {
-    //     this.setAuthorizationHeader(res.data.token);
-    //     this.setState({
-    //       loading: false,
-    //       errors: null,
-    //       authenticated: true,
-    //     });
-    //     this.props.history.push("/");
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       errors: err.response.data,
-    //       loading: false,
-    //     });
-    //   });
   };
 
   render = () => {
