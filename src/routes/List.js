@@ -1,7 +1,6 @@
 import React from "react";
 import { authService, dbService } from "../functions/util/fbase";
 import ListEvent from "../components/ListEvent";
-import SignOut from "../components/SignOut";
 
 /**
  * This route is a details page for the to-do list selected in the dashboard.
@@ -22,7 +21,7 @@ class List extends React.Component {
      * Retrieves work from firestore database given that the user is logged in
      */
     getMyWorks = () => {
-        dbService.collection('users').doc(authService.currentUser.email).collection('works').onSnapshot((snapshot) => {
+        dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listTitle).collection('works').onSnapshot((snapshot) => {
             const arr = snapshot.docs;
             this.setState({
                 eventArray: arr
@@ -51,7 +50,8 @@ class List extends React.Component {
     /**
      * Asynchronously handles the submission of the form
      * @param {Event} event form submission event
-     */    handleSubmit = async (event) => {
+     */
+    handleSubmit = async (event) => {
         event.preventDefault();
         const newWorkData = {
             title: this.state.title,
@@ -59,7 +59,7 @@ class List extends React.Component {
             owner: authService.currentUser.email,
         };
         // Adds a new document to the subcollection works in users. Note: this will change based on the new database structure
-        await dbService.collection('users').doc(authService.currentUser.email).collection('works').add(newWorkData)
+        await dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listTitle).collection('works').add(newWorkData)
         this.setState({
             title: "",
             description: "",
@@ -69,31 +69,32 @@ class List extends React.Component {
     render = () => {
         let key = 0;
         return (
-            <div>
-                <SignOut/>
-                <h2>To-do List!</h2>
+            <>
+                <h2>{this.props.listTitle}</h2>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         name="title"
                         placeholder="Title"
                         required
-                        value={this.state.email}
+                        value={this.state.title}
                         onChange={this.handleChange}
                     ></input>
                     <input
                         name="description"
                         placeholder="Description"
                         required
-                        value={this.state.nickname}
+                        value={this.state.description}
                         onChange={this.handleChange}
                     ></input>
                     <input type="submit" value="Add Your Work!"></input>
                 </form>
-                {this.state.eventArray.map((element) => {
-                    key++;
-                    return <ListEvent key={key} title={element.data().title} description={element.data().description} workId={element.id} />
-                })}
-            </div>
+                <div>
+                    {this.state.eventArray.map((element) => {
+                        key++;
+                        return <ListEvent key={key} title={element.data().title} description={element.data().description} workId={element.id} />
+                    })}
+                </div>
+            </>
         )
     }
 }
