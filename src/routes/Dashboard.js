@@ -23,7 +23,7 @@ class Dashboard extends React.Component {
             var value = 0;
             const arr = snapshot.docs.map((element) => {
                 value++;
-                return <List key={value} listTitle={element.data().title} />
+                return <List key={value} listId={element.data().title} />
             })
             this.setState({
                 listArray: arr
@@ -32,7 +32,7 @@ class Dashboard extends React.Component {
     }
 
     /**
-     * React life cycle method to fetch firestore data before the page loads
+     * React life cycle method; fetches firestore data before the page loads
      */
     componentDidMount = () => {
         this.getMyLists();

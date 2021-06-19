@@ -6,7 +6,7 @@ import { authService, dbService } from '../functions/util/fbase';
  */
 class ListEvent extends React.Component {
     constructor(props) {
-        super();
+        super(props);
         this.state = {
             newTitle: "",
             newDescription: "",

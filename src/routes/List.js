@@ -1,30 +1,30 @@
 import React from "react";
 import { authService, dbService } from "../functions/util/fbase";
-import ListEvent from "../components/ListEvent";
+import Column from "../components/Column";
 
 /**
  * This route is a details page for the to-do list selected in the dashboard.
  */
 class List extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             title: "",
             description: "",
-            eventArray: [],
-            eventId: "",
+            columnArray: [],
+            columnId: "",
             errors: {}
         };
     }
 
     /**
-     * Retrieves work from firestore database given that the user is logged in
+     * Retrieves columns from firestore database given that the user is logged in
      */
-    getMyWorks = () => {
-        dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listTitle).collection('works').onSnapshot((snapshot) => {
+    getMyColumns = () => {
+        dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listId).collection('columns').onSnapshot((snapshot) => {
             const arr = snapshot.docs;
             this.setState({
-                eventArray: arr
+                columnArray: arr
             })
         })
     }
@@ -33,7 +33,7 @@ class List extends React.Component {
      * React life cycle method to fetch firestore data before the page loads
      */
     componentDidMount = () => {
-        this.getMyWorks();
+        this.getMyColumns();
     }
 
     /**
@@ -49,6 +49,7 @@ class List extends React.Component {
 
     /**
      * Asynchronously handles the submission of the form
+     * Adds another column to the dashboard
      * @param {Event} event form submission event
      */
     handleSubmit = async (event) => {
@@ -58,8 +59,8 @@ class List extends React.Component {
             description: this.state.description,
             owner: authService.currentUser.email,
         };
-        // Adds a new document to the subcollection works in users. Note: this will change based on the new database structure
-        await dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listTitle).collection('works').add(newWorkData)
+        // Adds a new document to the subcollection works in users.
+        await dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listId).collection('columns').doc(this.state.title).set(newWorkData)
         this.setState({
             title: "",
             description: "",
@@ -70,7 +71,7 @@ class List extends React.Component {
         let key = 0;
         return (
             <>
-                <h2>{this.props.listTitle}</h2>
+                <h2>{this.props.listId}</h2>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         name="title"
@@ -86,12 +87,12 @@ class List extends React.Component {
                         value={this.state.description}
                         onChange={this.handleChange}
                     ></input>
-                    <input type="submit" value="Add Your Work!"></input>
+                    <input type="submit" value="Add Your Column"></input>
                 </form>
                 <div>
-                    {this.state.eventArray.map((element) => {
+                    {this.state.columnArray.map((element) => {
                         key++;
-                        return <ListEvent key={key} title={element.data().title} description={element.data().description} workId={element.id} />
+                        return <Column key={key} title={element.data().title} description={element.data().description} listId={this.props.listId} columnId={element.data().title} />
                     })}
                 </div>
             </>

@@ -1,7 +1,6 @@
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "../routes/Home";
 import About from "../routes/About";
-import List from "../routes/List";
 import SignIn from "../routes/SignIn";
 import SignUp from "../routes/SignUp";
 import Dashboard from "../routes/Dashboard";
@@ -17,7 +16,6 @@ const AppRouter = ({ isLoggedIn }) => {
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
               <Route exact path="/dashboard" component={Dashboard} />
-              <Route exact path="/list" component={List} />
             </>
             :
             <>
