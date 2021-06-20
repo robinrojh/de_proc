@@ -4,7 +4,7 @@ import { authService, dbService } from '../functions/util/fbase';
 /**
  * This component contains details about a work.
  */
-class ListEvent extends React.Component {
+class Work extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -116,4 +116,4 @@ class ListEvent extends React.Component {
     }
 }
 
-export default ListEvent;
+export default Work;

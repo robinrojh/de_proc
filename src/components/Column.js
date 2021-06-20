@@ -1,6 +1,52 @@
+import { withStyles } from '@material-ui/core';
 import React from 'react'
 import { authService, dbService } from '../functions/util/fbase';
-import ListEvent from './ListEvent';
+import Work from './Work';
+
+const styles = (theme) => ({
+    palette: {
+      primary: {
+        light: "#33c9dc",
+        main: "#00bcd4",
+        dark: "#008394",
+        contrastText: "#fff",
+      },
+      secondary: {
+        light: "#ff6333",
+        main: "#ff3d00",
+        dark: "#b22a00",
+        contrastText: "#fff",
+      },
+    },
+    typography: {
+      useNextVariants: true,
+    },
+    form: {
+      textAlign: "center",
+    },
+    image: {
+      margin: "20px auto 20ps auto",
+    },
+    pageTitle: {
+      margin: "10px auto 10ps auto",
+    },
+    textField: {
+      margin: "10px auto 10ps auto",
+    },
+    button: {
+      // marginTop: 0,
+      position: "relative",
+      float: "left",
+    },
+    customError: {
+      color: "red",
+      fontSize: "0.8rem",
+      marginTop: "20px",
+    },
+    progress: {
+      position: "absolute",
+    },
+  });
 
 class Column extends React.Component {
     constructor(props) {
@@ -162,7 +208,7 @@ class Column extends React.Component {
                     {this.state.eventArray.map((element) => {
                         key++;
                         console.log(element.data())
-                        return <ListEvent key={key} title={element.data().title} description={element.data().description} listId={this.props.listId} workId={element.id} />
+                        return <Work key={key} title={element.data().title} description={element.data().description} listId={this.props.listId} workId={element.id} />
                     })}
                 </div>
             </>
@@ -170,4 +216,4 @@ class Column extends React.Component {
     }
 }
 
-export default Column;
+export default withStyles(styles)(Column);

@@ -1,4 +1,4 @@
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import Home from "../routes/Home";
 import About from "../routes/About";
 import SignIn from "../routes/SignIn";
@@ -16,6 +16,7 @@ const AppRouter = ({ isLoggedIn }) => {
               <Route exact path="/" component={Home} />
               <Route exact path="/about" component={About} />
               <Route exact path="/dashboard" component={Dashboard} />
+              <Redirect to="/dashboard"></Redirect>
             </>
             :
             <>
@@ -24,7 +25,6 @@ const AppRouter = ({ isLoggedIn }) => {
               <Route exact path="/signin" component={SignIn} />
               <Route exact path="/signup" component={SignUp} />
               {/* <Route exact path="/list" component={List} /> */}
-
             </>
 
           }
