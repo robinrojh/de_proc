@@ -6,6 +6,10 @@ import Column from "../components/Column";
  * This route is a details page for the to-do list selected in the dashboard.
  */
 class List extends React.Component {
+    /**
+     * 
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -21,12 +25,18 @@ class List extends React.Component {
      * Retrieves columns from firestore database given that the user is logged in
      */
     getMyColumns = () => {
-        dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listId).collection('columns').onSnapshot((snapshot) => {
-            const arr = snapshot.docs;
-            this.setState({
-                columnArray: arr
+        dbService.collection('users').doc(authService.currentUser.email)
+            .collection('lists').doc(this.props.listId)
+            .collection('columns').onSnapshot((snapshot) => {
+                let value = 0;
+                const arr = snapshot.docs.map((element) => {
+                    return <Column key={value} title={element.data().title} description={element.data().description}
+                        listId={this.props.listId} columnId={element.data().title} />
+                });
+                this.setState({
+                    columnArray: arr
+                })
             })
-        })
     }
 
     /**
@@ -60,7 +70,9 @@ class List extends React.Component {
             owner: authService.currentUser.email,
         };
         // Adds a new document to the subcollection works in users.
-        await dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listId).collection('columns').doc(this.state.title).set(newWorkData)
+        await dbService.collection('users').doc(authService.currentUser.email)
+            .collection('lists').doc(this.props.listId)
+            .collection('columns').doc(this.state.title).set(newWorkData)
         this.setState({
             title: "",
             description: "",
@@ -68,7 +80,6 @@ class List extends React.Component {
     };
 
     render = () => {
-        let key = 0;
         return (
             <>
                 <h2>{this.props.listId}</h2>
@@ -89,12 +100,7 @@ class List extends React.Component {
                     ></input>
                     <input type="submit" value="Add Your Column"></input>
                 </form>
-                <div>
-                    {this.state.columnArray.map((element) => {
-                        key++;
-                        return <Column key={key} title={element.data().title} description={element.data().description} listId={this.props.listId} columnId={element.data().title} />
-                    })}
-                </div>
+                {this.state.columnArray}
             </>
         )
     }

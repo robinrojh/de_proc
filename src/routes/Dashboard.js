@@ -19,16 +19,17 @@ class Dashboard extends React.Component {
      * Retrieves to-do lists from firestore database given that the user is logged in
      */
     getMyLists = () => {
-        dbService.collection('users').doc(authService.currentUser.email).collection('lists').onSnapshot((snapshot) => {
-            var value = 0;
-            const arr = snapshot.docs.map((element) => {
-                value++;
-                return <List key={value} listId={element.data().title} />
+        dbService.collection('users').doc(authService.currentUser.email)
+            .collection('lists').onSnapshot((snapshot) => {
+                let value = 0;
+                const arr = snapshot.docs.map((element) => {
+                    value++;
+                    return <List key={value} listId={element.data().title} />
+                })
+                this.setState({
+                    listArray: arr
+                })
             })
-            this.setState({
-                listArray: arr
-            })
-        })
     }
 
     /**
@@ -61,7 +62,8 @@ class Dashboard extends React.Component {
             owner: authService.currentUser.email,
         };
         // Adds a new document to the subcollection works in users. Note: this will change based on the new database structure
-        await dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.state.title).set(newWorkData)
+        await dbService.collection('users').doc(authService.currentUser.email)
+            .collection('lists').doc(this.state.title).set(newWorkData)
         this.setState({
             title: "",
             description: "",

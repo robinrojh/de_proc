@@ -5,6 +5,11 @@ import { authService, dbService } from '../functions/util/fbase';
  * This component contains details about a work.
  */
 class Work extends React.Component {
+    /**
+     * 
+     * @param {Number, String, String, String, String, String} props contains 
+     * key, title, description, listId, columnId, workId, respectively.
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -55,10 +60,11 @@ class Work extends React.Component {
      */
     handleEditSubmit = async (event) => {
         event.preventDefault();
-        await dbService.collection('users').doc(authService.currentUser.email).collection('works').doc(this.props.workId).update({
-            title: this.state.newTitle,
-            description: this.state.newDescription
-        })
+        await dbService.collection('users').doc(authService.currentUser.email)
+            .collection('works').doc(this.props.workId).update({
+                title: this.state.newTitle,
+                description: this.state.newDescription
+            })
         this.setState({
             isEditing: false
         })
@@ -74,7 +80,8 @@ class Work extends React.Component {
         let ok;
         ok = window.confirm("Are you sure you want to delete this work?");
         if (ok) {
-            await dbService.collection('users').doc(authService.currentUser.email).collection('works').doc(this.props.workId).delete();
+            await dbService.collection('users').doc(authService.currentUser.email)
+                .collection('works').doc(this.props.workId).delete();
         }
     }
 
@@ -108,7 +115,6 @@ class Work extends React.Component {
                     </>
                     :
                     <button onClick={this.onEditClick}> Edit event </button>
-
                 }
                 <button onClick={this.handleDeleteClick}> Delete event </button> <br />
             </>

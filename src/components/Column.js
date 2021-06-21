@@ -5,50 +5,55 @@ import Work from './Work';
 
 const styles = (theme) => ({
     palette: {
-      primary: {
-        light: "#33c9dc",
-        main: "#00bcd4",
-        dark: "#008394",
-        contrastText: "#fff",
-      },
-      secondary: {
-        light: "#ff6333",
-        main: "#ff3d00",
-        dark: "#b22a00",
-        contrastText: "#fff",
-      },
+        primary: {
+            light: "#33c9dc",
+            main: "#00bcd4",
+            dark: "#008394",
+            contrastText: "#fff",
+        },
+        secondary: {
+            light: "#ff6333",
+            main: "#ff3d00",
+            dark: "#b22a00",
+            contrastText: "#fff",
+        },
     },
     typography: {
-      useNextVariants: true,
+        useNextVariants: true,
     },
     form: {
-      textAlign: "center",
+        textAlign: "center",
     },
     image: {
-      margin: "20px auto 20ps auto",
+        margin: "20px auto 20ps auto",
     },
     pageTitle: {
-      margin: "10px auto 10ps auto",
+        margin: "10px auto 10ps auto",
     },
     textField: {
-      margin: "10px auto 10ps auto",
+        margin: "10px auto 10ps auto",
     },
     button: {
-      // marginTop: 0,
-      position: "relative",
-      float: "left",
+        // marginTop: 0,
+        position: "relative",
+        float: "left",
     },
     customError: {
-      color: "red",
-      fontSize: "0.8rem",
-      marginTop: "20px",
+        color: "red",
+        fontSize: "0.8rem",
+        marginTop: "20px",
     },
     progress: {
-      position: "absolute",
+        position: "absolute",
     },
-  });
+});
 
 class Column extends React.Component {
+    /**
+     * 
+     * @param {Number, String, String, String, String} props contains
+     * key, title, description, listId, columnId, respectively.
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -65,14 +70,19 @@ class Column extends React.Component {
      */
     getMyWorks = () => {
         dbService.collection('users').doc(authService.currentUser.email)
-        .collection('lists').doc(this.props.listId)
-        .collection('columns').doc(this.props.columnId)
-        .collection('works').onSnapshot((snapshot) => {
-            const arr = snapshot.docs;
-            this.setState({
-                eventArray: arr
+            .collection('lists').doc(this.props.listId)
+            .collection('columns').doc(this.props.columnId)
+            .collection('works').onSnapshot((snapshot) => {
+                let value = 0;
+                const arr = snapshot.docs.map((element) => {
+                    value++;
+                    return <Work key={value} title={element.data().title} description={element.data().description}
+                        listId={this.props.listId} columnId={this.props.columnId} workId={element.id} />
+                });
+                this.setState({
+                    eventArray: arr
+                })
             })
-        })
     }
 
     /**
@@ -158,11 +168,11 @@ class Column extends React.Component {
     handleEditSubmit = async (event) => {
         event.preventDefault();
         await dbService.collection('users').doc(authService.currentUser.email)
-        .collection('lists').doc(this.props.listId)
-        .collection('columns').doc(this.props.columnId).update({
-            title: this.state.newTitle,
-            description: this.state.newDescription
-        })
+            .collection('lists').doc(this.props.listId)
+            .collection('columns').doc(this.props.columnId).update({
+                title: this.state.newTitle,
+                description: this.state.newDescription
+            })
         this.setState({
             isEditing: false
         })
@@ -178,12 +188,13 @@ class Column extends React.Component {
         let ok;
         ok = window.confirm("Are you sure you want to delete this work?");
         if (ok) {
-            await dbService.collection('users').doc(authService.currentUser.email).collection('lists').doc(this.props.listId).collection('columns').doc(this.props.columnId).delete();
+            await dbService.collection('users').doc(authService.currentUser.email)
+                .collection('lists').doc(this.props.listId)
+                .collection('columns').doc(this.props.columnId).delete();
         }
     }
 
     render = () => {
-        let key = 0;
         return (
             <>
                 <h3>{this.props.columnId}</h3>
@@ -204,13 +215,7 @@ class Column extends React.Component {
                     ></input>
                     <input type="submit" value="Add Your Work"></input>
                 </form>
-                <div>
-                    {this.state.eventArray.map((element) => {
-                        key++;
-                        console.log(element.data())
-                        return <Work key={key} title={element.data().title} description={element.data().description} listId={this.props.listId} workId={element.id} />
-                    })}
-                </div>
+                {this.state.eventArray}
             </>
         )
     }
