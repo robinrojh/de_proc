@@ -1,15 +1,17 @@
 const path = require('path');
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Notification, remote } = require('electron');
 const isDev = require('electron-is-dev');
 
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1600,
+    height: 900,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
+      preload: __dirname + '/preload.js'
     },
   });
 
@@ -24,6 +26,7 @@ function createWindow() {
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
+  sendNotification()
 }
 
 // This method will be called when Electron has finished
@@ -45,3 +48,9 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+const sendNotification = () => {
+    new Notification({
+      title: "Test",
+    }).show();
+}
