@@ -1,6 +1,6 @@
 const path = require('path');
 
-const { app, BrowserWindow, Notification, remote } = require('electron');
+const { app, BrowserWindow, Notification } = require('electron');
 const isDev = require('electron-is-dev');
 
 function createWindow() {
@@ -8,10 +8,11 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1600,
     height: 900,
+    title: 'DeProc To-do List',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      preload: __dirname + '/preload.js'
+      preload: __dirname + '/renderer.js'
     },
   });
 
@@ -22,11 +23,15 @@ function createWindow() {
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../build/index.html')}`
   );
+  win.setMenu(null);
   // Open the DevTools.
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
-  sendNotification()
+  // new Notification({
+  //   title: "Welcome!",
+  //   body: "Let's start your work by looking at your to-do list!"
+  // }).show();
 }
 
 // This method will be called when Electron has finished
@@ -48,9 +53,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-const sendNotification = () => {
-    new Notification({
-      title: "Test",
-    }).show();
-}

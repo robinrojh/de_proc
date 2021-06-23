@@ -17,6 +17,9 @@ const App = () => {
       }
       setInit(true);
     })
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
   }, [isLoggedIn])
   return (
     <>
