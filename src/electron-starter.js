@@ -1,6 +1,6 @@
 const path = require('path');
 
-const { app, BrowserWindow, Notification } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
 
 function createWindow() {
@@ -28,10 +28,6 @@ function createWindow() {
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
-  // new Notification({
-  //   title: "Welcome!",
-  //   body: "Let's start your work by looking at your to-do list!"
-  // }).show();
 }
 
 // This method will be called when Electron has finished
