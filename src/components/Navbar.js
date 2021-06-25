@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { Link, Redirect } from "react-router-dom";
-import MyButton from "../util/MyButton";
+import MyButton from "../functions/util/MyButton";
 import axios from "axios";
+import { authService } from "../functions/util/fbase";
 
 //MUI stuff
 import AppBar from "@material-ui/core/AppBar";
@@ -13,24 +14,27 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 
 class Navbar extends Component {
   state = {
-    authenticated: localStorage.FBIdToken,
+    authenticated: false,
   };
   handleLogout = () => {
     console.log("logout");
-    localStorage.removeItem("FBIdToken");
-    delete axios.defaults.headers.common["Authorization"];
+    authService.signOut();
     this.setState({
       authenticated: false,
     });
-    // this.props.history.push("/SignIn");
   };
+  componentDidMount() {
+    this.setState({
+      authenticated: this.props.authenticated,
+    });
+  }
   render() {
     return (
       <AppBar>
         <Toolbar className="nav-container">
           {this.state.authenticated ? (
             <Fragment>
-              <Link to="List">
+              <Link to="/Dashboard">
                 <MyButton tip="List">
                   <ListIcon color="primary" />
                 </MyButton>
@@ -59,7 +63,7 @@ class Navbar extends Component {
                 {" "}
                 Home
               </Button>
-              <Button color="inherit" component={Link} to="/List">
+              <Button color="inherit" component={Link} to="/Dashboard">
                 {" "}
                 List
               </Button>

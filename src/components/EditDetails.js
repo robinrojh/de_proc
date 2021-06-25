@@ -12,12 +12,12 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import EditIcon from "@material-ui/icons/Edit";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import axios from "axios";
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
+import { dbService, authService } from "../functions/util/fbase";
 
 // const styles = (theme) => ({
 //   ...theme,
@@ -75,14 +75,32 @@ class EditDetails extends Component {
     workId: "",
   };
   editDetails = (event) => {
-    const newWork = {
-      description: this.state.description,
-      dueDate: this.state.dueDate.toISOString(),
-    };
-    console.log(this.props.column);
-    console.log(this.state.workId);
-    axios
-      .post(`/work/${this.props.column}/${this.state.workId}/editWork`, newWork)
+    // if (req.body.description.trim() === "") {
+    //   return res
+    //     .status(400)
+    //     .json({ description: "Description should not be empty" });
+    // }
+    const work = dbService
+      .collection("users")
+      .doc(authService.currentUser.email)
+      .collection("lists")
+      .doc(this.props.listName)
+      .collection("columns")
+      .doc(this.props.columnName)
+      .collection("works")
+      .doc(this.state.workId);
+    work
+      .get()
+      .then((doc) => {
+        const modifiedWork = {
+          description: this.state.description,
+          dueDate: this.state.dueDate,
+          completed: doc.data().completed,
+          owner: doc.data().owner,
+        };
+        console.log(modifiedWork);
+        work.update(modifiedWork);
+      })
       .catch((err) => {
         console.error(err);
       });
@@ -116,7 +134,7 @@ class EditDetails extends Component {
       this.state.description,
       this.state.dueDate.toISOString(),
       this.props.work,
-      this.props.column
+      this.props.columnName
     );
     this.handleClose();
   };

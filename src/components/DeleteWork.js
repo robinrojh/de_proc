@@ -7,6 +7,7 @@ import axios from "axios";
 import AddIcon from "@material-ui/icons/Add";
 import "date-fns";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import { dbService, authService } from "../functions/util/fbase";
 
 const styles = (theme) => ({
   palette: {
@@ -54,8 +55,17 @@ const styles = (theme) => ({
 });
 class DeleteWork extends Component {
   handleSubmit = () => {
-    axios.delete(`/work/${this.props.column}/${this.props.work.workId}`);
-    this.props.delete(this.props.column, this.props.work);
+    dbService
+      .collection("users")
+      .doc(authService.currentUser.email)
+      .collection("lists")
+      .doc(this.props.listName)
+      .collection("columns")
+      .doc(this.props.columnName)
+      .collection("works")
+      .doc(this.props.work.workId)
+      .delete();
+    this.props.delete(this.props.columnName, this.props.work);
   };
   render() {
     const { classes } = this.props;

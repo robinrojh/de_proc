@@ -1,17 +1,21 @@
-import React from "react";
+import { Grid } from "@material-ui/core";
+import { render } from "@testing-library/react";
 import { Link } from "react-router-dom";
+import React, { Component } from "react";
 
-class Home extends React.Component {
-    render = () => {
-        return (
-            <div>
-                Home page!
-                <button name="About" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/about">About</Link></button>
-                <button name="SignIn" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/signin">Sign In</Link></button>
-                <button name="SignUp" style={{ backgroundColor: "transparent", borderColor: "transparent" }}><Link to="/signup">Sign Up</Link></button>
-            </div>
-        )
-    }
+class Home extends Component {
+  render() {
+    return (
+      <Grid container spacing={16}>
+        <Grid item sm={8} xs={12}>
+          <p>Content,,</p>
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <p>profile..</p>
+        </Grid>
+      </Grid>
+    );
+  }
 }
 
 export default Home;
