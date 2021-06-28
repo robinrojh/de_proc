@@ -19,10 +19,6 @@ import {
 } from "@material-ui/pickers";
 import { dbService, authService } from "../functions/util/fbase";
 
-// const styles = (theme) => ({
-//   ...theme,
-// });
-
 const styles = (theme) => ({
   palette: {
     primary: {
@@ -130,9 +126,10 @@ class EditDetails extends Component {
   };
   handleSubmit = () => {
     this.editDetails();
+    console.log(this.state.dueDate)
     this.props.edit(
       this.state.description,
-      this.state.dueDate.toISOString(),
+      this.state.dueDate,
       this.props.work,
       this.props.columnName
     );

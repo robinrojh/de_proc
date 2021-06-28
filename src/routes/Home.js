@@ -1,6 +1,4 @@
 import { Grid } from "@material-ui/core";
-import { render } from "@testing-library/react";
-import { Link } from "react-router-dom";
 import React, { Component } from "react";
 
 class Home extends Component {
