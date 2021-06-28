@@ -1,10 +1,8 @@
 import React from "react";
-import axios from "axios";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import AppIcon from "../images/icon.jpg";
-
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -53,6 +51,7 @@ class SignIn extends React.Component {
     };
   }
 
+
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
@@ -75,11 +74,6 @@ class SignIn extends React.Component {
     }
   };
 
-  setAuthorizationHeader = (token) => {
-    const FBIdToken = `Bearer ${token}`;
-    localStorage.setItem("FBIdToken", FBIdToken);
-    axios.defaults.headers.common["Authorization"] = FBIdToken;
-  };
   render() {
     const { classes, loading } = this.props;
     const { errors } = this.state;

@@ -3,14 +3,12 @@ import './App.css';
 import { useEffect, useState } from "react";
 import { authService } from "./functions/util/fbase";
 
-
 const App = () => {
   // Provides a basic router for all the paths in the website.
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
-      console.log(isLoggedIn)
       if (user) {
         setIsLoggedIn(true);
       }
@@ -19,6 +17,9 @@ const App = () => {
       }
       setInit(true);
     })
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
   }, [isLoggedIn])
   return (
     <>

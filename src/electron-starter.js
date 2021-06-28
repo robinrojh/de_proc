@@ -6,10 +6,13 @@ const isDev = require('electron-is-dev');
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1600,
+    height: 900,
+    title: 'DeProc To-do List',
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
+      preload: __dirname + '/renderer.js'
     },
   });
 
@@ -20,6 +23,7 @@ function createWindow() {
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../build/index.html')}`
   );
+  win.setMenu(null);
   // Open the DevTools.
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
