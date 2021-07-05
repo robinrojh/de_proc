@@ -77,6 +77,7 @@ class Dashboard extends Component {
             </Grid>
           );
         })
+        new Notification('Dashboard Notif')
         this.setState({
           listArray: componentList
         });

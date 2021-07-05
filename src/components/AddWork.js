@@ -9,7 +9,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import axios from "axios";
 import AddIcon from "@material-ui/icons/Add";
 import "date-fns";
 import Grid from "@material-ui/core/Grid";
@@ -20,6 +19,8 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { dbService, authService } from "../functions/util/fbase";
+
+const cron = require('cron')
 
 // const styles = (theme) => ({
 //   ...theme,
@@ -95,6 +96,11 @@ class AddWork extends Component {
       .catch((err) => {
         console.error(err);
       });
+    // const job = new cron.CronJob(this.state.dueDate, () => {
+    //   new Notification('Hello!');
+    //   console.log('hello')
+    // })
+    // job.start()
   };
   handleOpen = () => {
     this.setState({ open: true });
@@ -118,7 +124,7 @@ class AddWork extends Component {
     };
     this.addWork();
     console.log(this.props.column);
-    this.props.addWork(this.props.columnName, newWork);
+    this.props.add(this.props.columnName, newWork);
     this.handleClose();
   };
   handleDuedateChange = (event) => {
@@ -200,7 +206,7 @@ class AddWork extends Component {
 }
 
 AddWork.propTypes = {
-  addWork: PropTypes.func.isRequired,
+  add: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

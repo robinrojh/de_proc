@@ -214,7 +214,7 @@ class EditDetails extends Component {
 }
 
 EditDetails.propTypes = {
-  editDetails: PropTypes.func.isRequired,
+  edit: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

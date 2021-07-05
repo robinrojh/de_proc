@@ -3,6 +3,8 @@ import React from "react";
 import { authService, dbService } from "../functions/util/fbase";
 import Work from "./Work2";
 
+const cron = require('cron')
+
 const styles = (theme) => ({
   palette: {
     primary: {
@@ -81,6 +83,12 @@ class Column extends React.Component {
         let value = 0;
         const arr = snapshot.docs.map((element) => {
           value++;
+          console.log(element.data())
+          // const job = new cron.CronJob(new Date(element.data().dueDate), () => {
+          //   new Notification('The deadline for ' + element.data().title + ' is over.');
+          //   console.log('job started')
+          // })
+          // job.start()
           return (
             <Work
               key={value}

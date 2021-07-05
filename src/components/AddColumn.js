@@ -10,7 +10,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import axios from "axios";
-import AddIcon from "@material-ui/icons/Add";
 import "date-fns";
 import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
@@ -19,7 +18,6 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
-import { Typography } from "@material-ui/core";
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import { authService, dbService } from "../functions/util/fbase";
 

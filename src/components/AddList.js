@@ -161,7 +161,7 @@ class AddList extends Component {
           fullWidth
           maxWidth="sm"
         >
-          <DialogTitle>Add a column and work for your new list!!</DialogTitle>
+          <DialogTitle>Add a column for your new list!!</DialogTitle>
           <DialogContent>
             <form>
               <TextField
@@ -188,7 +188,7 @@ class AddList extends Component {
                 onChange={this.handleChange}
                 fullWidth
               />
-              <TextField
+              {/* <TextField
                 name="description"
                 type="text"
                 label="Description"
@@ -199,7 +199,7 @@ class AddList extends Component {
                 value={this.state.description}
                 onChange={this.handleChange}
                 fullWidth
-              />
+              /> */}
             </form>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Grid container justify="space-around">

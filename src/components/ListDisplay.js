@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react";
 import { authService, dbService } from "../functions/util/fbase";
 import Grid from "@material-ui/core/Grid";
 import Work from "./Work";
-import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Button, Typography } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
@@ -11,6 +10,8 @@ import AddWork from "../components/AddWork";
 import Divider from "@material-ui/core/Divider";
 import AddColumn from "../components/AddColumn";
 import Box from "@material-ui/core/Box";
+
+const cron = require('cron')
 
 const styles = (theme) => ({
   paper: {
@@ -33,6 +34,7 @@ class ListDisplay extends Component {
     listName: "",
     columns: [],
   };
+
   addNewColumn = (columnName, newWork) => {
     let newColumns = this.state.columns;
     let work = [];
@@ -43,6 +45,7 @@ class ListDisplay extends Component {
       [columnName]: work,
     });
   };
+
   editWork = (newDescription, newDueDate, oldWork, column) => {
     console.log(column);
     let newColumn = this.state[column];
@@ -54,6 +57,7 @@ class ListDisplay extends Component {
       [column]: newColumn,
     });
   };
+
   deleteWork = (column, work) => {
     let newColumn = this.state[column];
     let ind = this.state[column].indexOf(work);
@@ -62,6 +66,7 @@ class ListDisplay extends Component {
       [column]: newColumn,
     });
   };
+
   addWork = (column, newWork) => {
     let newColumn = this.state[column];
     newColumn.push(newWork);
@@ -69,20 +74,18 @@ class ListDisplay extends Component {
       [column]: newColumn,
     });
   };
+
   componentDidMount() {
-    console.log(authService.currentUser);
     const title = this.props.match.params.listTitle;
     this.setState({
       listName: title,
     });
-    console.log(title);
+    let countOfOverdueWorks = 0;
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
       .doc(title)
-      // dbService
-      //   .doc(`users/${authService.currentUser}/lists/${title}`)
       .collection("columns")
       .get()
       .then((data) => {
@@ -93,9 +96,6 @@ class ListDisplay extends Component {
       .then(() => {
         this.state.columns.forEach((col) => {
           dbService
-            // .doc(
-            //   `users/${authService.currentUser.email}/lists/${title}/columns/${col}/works`
-            // )
             .collection("users")
             .doc(authService.currentUser.email)
             .collection("lists")
@@ -114,8 +114,11 @@ class ListDisplay extends Component {
                   owner: doc.data().owner,
                   workId: doc.id,
                 });
+                if (new Date(doc.data().dueDate) <= new Date()) {
+                  countOfOverdueWorks++;
+                }
               });
-              console.log(work);
+              new Notification('You have ' + countOfOverdueWorks + ' tasks overdue!')
               return work;
             })
             .then((works) => {
@@ -131,10 +134,12 @@ class ListDisplay extends Component {
       .catch((err) => {
         console.error(err);
       });
+
   }
   render() {
     const { classes } = this.props;
     if (true) {
+      let value = 0;
       let listOfWork = this.state.columns ? (
         this.state.columns.map((column) => {
           let workList = this.state[column] ? (
@@ -145,16 +150,17 @@ class ListDisplay extends Component {
                   key={works.workId}
                   edit={this.editWork}
                   delete={this.deleteWork}
-                  columnName={column}
                   listName={this.state.listName}
+                  columnName={column}
                 />
               );
             })
           ) : (
             <p>Loading...</p>
           );
+          value++;
           return (
-            <Fragment>
+            <Fragment key={value}>
               <Divider orientation="vertical" flexItem />
 
               <Grid item xs>
@@ -167,7 +173,7 @@ class ListDisplay extends Component {
                   {workList}
 
                   <AddWork
-                    addWork={this.addWork}
+                    add={this.addWork}
                     columnName={column}
                     listName={this.state.listName}
                   />
