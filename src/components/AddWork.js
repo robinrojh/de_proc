@@ -96,11 +96,6 @@ class AddWork extends Component {
       .catch((err) => {
         console.error(err);
       });
-    // const job = new cron.CronJob(this.state.dueDate, () => {
-    //   new Notification('Hello!');
-    //   console.log('hello')
-    // })
-    // job.start()
   };
   handleOpen = () => {
     this.setState({ open: true });
@@ -124,7 +119,7 @@ class AddWork extends Component {
     };
     this.addWork();
     console.log(this.props.column);
-    this.props.add(this.props.columnName, newWork);
+    this.props.addWork(this.props.columnName, newWork);
     this.handleClose();
   };
   handleDuedateChange = (event) => {
@@ -206,7 +201,7 @@ class AddWork extends Component {
 }
 
 AddWork.propTypes = {
-  add: PropTypes.func.isRequired,
+  addWork: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

@@ -13,20 +13,24 @@ import Checkbox from "@material-ui/core/Checkbox";
 
 dayjs.extend(relativeTime);
 
-const styles = {
-  card: {
-    display: "flex",
-    marginBottom: 20,
+const styles = (theme) => ({
+  paper: {
+    textAlign: "center",
+    color: theme.palette.text.secondary,
   },
-  content: {
-    padding: 20,
-    objectFit: "cover",
+  root: {
+    flexGrow: 1,
   },
-};
-class work extends Component {
+  buttons: {
+    textAlign: "center",
+    "& a": {
+      margin: "20px 10px",
+    },
+  },
+});
+class Work extends Component {
   state = {
-    workId: this.props.work.workId,
-    completed: this.props.work.completed,
+    completed: this.props.completed,
   };
   handleChange = () => {
     this.state.completed
@@ -36,10 +40,12 @@ class work extends Component {
   render() {
     const {
       classes,
-      work: { description, dueDate, workId },
+      description, 
+      dueDate, 
+      workId,
     } = this.props;
     return (
-      <Grid>
+      <Grid key={workId}>
         <Grid item>
           <Card className={classes.card}>
             <CardContent className={classes.content}>
@@ -53,7 +59,7 @@ class work extends Component {
               </Typography>
             </CardContent>
             <EditDetails
-              work={this.props.work}
+              work={{description, dueDate, workId}}
               edit={this.props.edit}
               columnName={this.props.columnName}
               listName={this.props.listName}
@@ -78,4 +84,4 @@ class work extends Component {
   }
 }
 
-export default withStyles(styles)(work);
+export default withStyles(styles)(Work);

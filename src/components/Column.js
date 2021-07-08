@@ -1,52 +1,24 @@
-import { withStyles } from "@material-ui/core";
+import { Box, Divider, Grid, Paper, Typography, withStyles } from "@material-ui/core";
 import React from "react";
+import { Fragment } from "react";
 import { authService, dbService } from "../functions/util/fbase";
-import Work from "./Work2";
-
-const cron = require('cron')
+import AddWork from "./AddWork";
+import Work from "./Work";
+import PropTypes from "prop-types";
 
 const styles = (theme) => ({
-  palette: {
-    primary: {
-      light: "#33c9dc",
-      main: "#00bcd4",
-      dark: "#008394",
-      contrastText: "#fff",
-    },
-    secondary: {
-      light: "#ff6333",
-      main: "#ff3d00",
-      dark: "#b22a00",
-      contrastText: "#fff",
-    },
-  },
-  typography: {
-    useNextVariants: true,
-  },
-  form: {
+  paper: {
     textAlign: "center",
+    color: theme.palette.text.secondary,
   },
-  image: {
-    margin: "20px auto 20ps auto",
+  root: {
+    flexGrow: 1,
   },
-  pageTitle: {
-    margin: "10px auto 10ps auto",
-  },
-  textField: {
-    margin: "10px auto 10ps auto",
-  },
-  button: {
-    // marginTop: 0,
-    position: "relative",
-    float: "left",
-  },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: "20px",
-  },
-  progress: {
-    position: "absolute",
+  buttons: {
+    textAlign: "center",
+    "& a": {
+      margin: "20px 10px",
+    },
   },
 });
 
@@ -61,7 +33,7 @@ class Column extends React.Component {
     this.state = {
       title: "",
       description: "",
-      eventArray: [],
+      workList: [],
       eventId: "",
       errors: {},
     };
@@ -71,6 +43,7 @@ class Column extends React.Component {
    * Retrieves work from firestore database given that the user is logged in
    */
   getMyWorks = () => {
+    const { classes } = this.props;
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -81,28 +54,27 @@ class Column extends React.Component {
       .collection("works")
       .onSnapshot((snapshot) => {
         let value = 0;
-        const arr = snapshot.docs.map((element) => {
-          value++;
-          console.log(element.data())
-          // const job = new cron.CronJob(new Date(element.data().dueDate), () => {
-          //   new Notification('The deadline for ' + element.data().title + ' is over.');
-          //   console.log('job started')
-          // })
-          // job.start()
-          return (
-            <Work
-              key={value}
-              title={element.data().title}
-              description={element.data().description}
-              listId={this.props.listId}
-              columnId={this.props.columnId}
-              workId={element.id}
-            />
-          );
-        });
-        this.setState({
-          eventArray: arr,
-        });
+        if (!snapshot.empty) {
+          const arr = snapshot.docs.map((element) => {
+            value++;
+            return (
+              <Work
+                key={value}
+                title={element.data().title}
+                description={element.data().description}
+                dueDate={element.data().dueDate}
+                listId={this.props.listId}
+                columnId={this.props.columnId}
+                workId={element.id}
+                classes={classes}
+              />
+            );
+          });
+
+          this.setState({
+            workList: arr,
+          });
+        }
       });
   };
 
@@ -110,7 +82,12 @@ class Column extends React.Component {
    * React life cycle method to fetch firestore data before the page loads
    */
   componentDidMount = () => {
-    this.getMyWorks();
+    try {
+      this.getMyWorks();
+    }
+    catch (error) {
+      console.error(error);
+    }
   };
 
   /**
@@ -232,30 +209,35 @@ class Column extends React.Component {
   };
 
   render = () => {
+    const { classes } = this.props;
     return (
-      <>
-        <h3>{this.props.columnId}</h3>
-        <form onSubmit={this.handleSubmit}>
-          <input
-            name="title"
-            placeholder="Title"
-            required
-            value={this.state.title}
-            onChange={this.handleChange}
-          ></input>
-          <input
-            name="description"
-            placeholder="Description"
-            required
-            value={this.state.description}
-            onChange={this.handleChange}
-          ></input>
-          <input type="submit" value="Add Your Work"></input>
-        </form>
-        {this.state.eventArray}
-      </>
+      <Fragment>
+        <Divider orientation="vertical" flexItem />
+        <Grid item xs>
+          <Typography variant="h6">
+            <Box fontStyle="oblique" fontFamily="Monospace">
+              {this.props.columnId}
+            </Box>
+          </Typography>
+          <Paper className={classes.paper}>
+            {this.state.workList}
+            <AddWork
+              addWork={this.addWork}
+              columnName={this.props.columnId}
+              listName={this.state.listName}
+            />
+          </Paper>
+        </Grid>
+        <Divider orientation="vertical" flexItem />
+      </Fragment>
     );
   };
+}
+
+Column.propTypes = {
+  columnId: PropTypes.string.isRequired,
+  listId: PropTypes.string.isRequired,
+  classes: PropTypes.object.isRequired,
 }
 
 export default withStyles(styles)(Column);

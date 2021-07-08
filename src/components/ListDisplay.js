@@ -10,6 +10,7 @@ import AddWork from "../components/AddWork";
 import Divider from "@material-ui/core/Divider";
 import AddColumn from "../components/AddColumn";
 import Box from "@material-ui/core/Box";
+import Column from "./Column";
 
 const cron = require('cron')
 
@@ -75,155 +76,88 @@ class ListDisplay extends Component {
     });
   };
 
-  componentDidMount() {
+  getMyColumns = () => {
     const title = this.props.match.params.listTitle;
     this.setState({
       listName: title,
     });
-    let countOfOverdueWorks = 0;
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
       .doc(title)
       .collection("columns")
-      .get()
-      .then((data) => {
-        data.forEach((doc) => {
-          this.state.columns.push(doc.data().title);
+      .onSnapshot((element) => {
+        let value = 0;
+        const columnsArr = this.state.columns ? (
+          element.docs.map((doc) => {
+            value++;
+            return <Column
+              key={value}
+              columnId={doc.data().title}
+              listId={this.state.listName}
+              classes={this.props.classes}
+            />
+          })
+        ) : (
+          <p>Loading...</p>
+        );
+        this.setState({
+          columns: columnsArr
         });
       })
-      .then(() => {
-        this.state.columns.forEach((col) => {
-          dbService
-            .collection("users")
-            .doc(authService.currentUser.email)
-            .collection("lists")
-            .doc(title)
-            .collection("columns")
-            .doc(col)
-            .collection("works")
-            .orderBy("dueDate")
-            .get()
-            .then((data) => {
-              let work = [];
-              data.forEach((doc) => {
-                work.push({
-                  description: doc.data().description,
-                  dueDate: doc.data().dueDate,
-                  owner: doc.data().owner,
-                  workId: doc.id,
-                });
-                if (new Date(doc.data().dueDate) <= new Date()) {
-                  countOfOverdueWorks++;
-                }
-              });
-              new Notification('You have ' + countOfOverdueWorks + ' tasks overdue!')
-              return work;
-            })
-            .then((works) => {
-              this.setState({
-                [col]: works,
-              });
-            });
-        });
-      })
-      .then(() => {
-        console.log(this.state);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
   }
-  render() {
-    const { classes } = this.props;
-    if (true) {
-      let value = 0;
-      let listOfWork = this.state.columns ? (
-        this.state.columns.map((column) => {
-          let workList = this.state[column] ? (
-            this.state[column].map((works) => {
-              return (
-                <Work
-                  work={works}
-                  key={works.workId}
-                  edit={this.editWork}
-                  delete={this.deleteWork}
-                  listName={this.state.listName}
-                  columnName={column}
-                />
-              );
-            })
-          ) : (
-            <p>Loading...</p>
-          );
-          value++;
-          return (
-            <Fragment key={value}>
-              <Divider orientation="vertical" flexItem />
 
-              <Grid item xs>
-                <Typography variant="h6">
-                  <Box fontStyle="oblique" fontFamily="Monospace">
-                    {column}
-                  </Box>
-                </Typography>
-                <Paper className={classes.paper}>
-                  {workList}
+  // getMyWorks = () => {
+  //   const title = this.props.match.params.listTitle;
+  //   this.state.columns.forEach((col) => {
+  //     dbService
+  //       .collection("users")
+  //       .doc(authService.currentUser.email)
+  //       .collection("lists")
+  //       .doc(title)
+  //       .collection("columns")
+  //       .doc(col)
+  //       .collection("works")
+  //       .orderBy("dueDate")
+  //       .onSnapshot((element) => {
+  //         const worksArr = element.docs.map((doc) => {
+  //           return {
+  //             description: doc.data().description,
+  //             dueDate: doc.data().dueDate,
+  //             owner: doc.data().owner,
+  //             workId: doc.id,
+  //           }
+  //         })
+  //         this.setState({
+  //           [col]: worksArr
+  //         })
+  //       })
+  //   });
+  // }
 
-                  <AddWork
-                    add={this.addWork}
-                    columnName={column}
-                    listName={this.state.listName}
-                  />
-                </Paper>
-              </Grid>
-              <Divider orientation="vertical" flexItem />
-            </Fragment>
-          );
-        })
-      ) : (
-        <p>Loading...</p>
-      );
-      return (
-        <div>
-          <AddColumn
-            addNewColumn={this.addNewColumn}
-            listName={this.state.listName}
-          />
-          <Grid container spacing={3} className={classes.root}>
-            {listOfWork}
-          </Grid>
-        </div>
-      );
-    } else {
-      return (
-        <Paper className={classes.paper}>
-          <Typography variant="body2" align="center">
-            No profile found, please login
-          </Typography>
-          <div className={classes.buttons}>
-            <Button
-              variant="contained"
-              color="primary"
-              component={Link}
-              to="/SignIn"
-            >
-              Login
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              component={Link}
-              to="/SignUp"
-            >
-              Signup
-            </Button>
-          </div>
-        </Paper>
-      );
+  componentDidMount = async () => {
+    try {
+      this.getMyColumns();
     }
+    catch (err) {
+      console.error(err);
+    };
+  }
+
+  render = () => {
+    const { classes } = this.props;
+    return (
+      <div>
+        <AddColumn
+          addNewColumn={this.addNewColumn}
+          listName={this.state.listName}
+        />
+        <Grid container spacing={3} className={classes.root}>
+          {this.state.columns}
+        </Grid>
+      </div>
+    )
   }
 }
 

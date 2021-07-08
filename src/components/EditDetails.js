@@ -70,6 +70,7 @@ class EditDetails extends Component {
     open: false,
     workId: "",
   };
+
   editDetails = (event) => {
     // if (req.body.description.trim() === "") {
     //   return res
@@ -101,6 +102,7 @@ class EditDetails extends Component {
         console.error(err);
       });
   };
+
   mapDetailsToState = (work) => {
     this.setState({
       description: work.description,
@@ -108,22 +110,27 @@ class EditDetails extends Component {
       workId: work.workId,
     });
   };
+
   handleOpen = () => {
     this.setState({ open: true });
     this.mapDetailsToState(this.props.work);
   };
+
   handleClose = () => {
     this.setState({ open: false });
   };
+
   componentDidMount() {
     const { work } = this.props;
     this.mapDetailsToState(work);
   }
+
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
+
   handleSubmit = () => {
     this.editDetails();
     console.log(this.state.dueDate)
@@ -135,11 +142,13 @@ class EditDetails extends Component {
     );
     this.handleClose();
   };
+
   handleDuedateChange = (event) => {
     this.setState({
       dueDate: event,
     });
   };
+  
   render() {
     const { classes } = this.props;
     return (
