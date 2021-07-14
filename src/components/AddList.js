@@ -18,6 +18,11 @@ import {
 } from "@material-ui/pickers";
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import { dbService, authService } from "../functions/util/fbase";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
 // const styles = (theme) => ({
 //   ...theme,
@@ -74,6 +79,7 @@ class AddList extends Component {
     description: "",
     dueDate: new Date(),
     open: false,
+    notification: 5,
   };
   addList = (event) => {
     console.log("adding");
@@ -130,6 +136,11 @@ class AddList extends Component {
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
+    });
+  };
+  handleNotificationChange = (event) => {
+    this.setState({
+      notification: event.target.value,
     });
   };
   handleSubmit = () => {
@@ -228,6 +239,19 @@ class AddList extends Component {
                 />
               </Grid>
             </MuiPickersUtilsProvider>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="notification">Notification settings</InputLabel>
+              <Select
+                labelId="notification"
+                id="notification"
+                value={this.state.notification}
+                onChange={this.handleNotificationChange}
+              >
+                <MenuItem value={5}>5 minutes</MenuItem>
+                <MenuItem value={10}>10 minutes</MenuItem>
+                <MenuItem value={15}>15 minutes</MenuItem>
+              </Select>
+            </FormControl>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">

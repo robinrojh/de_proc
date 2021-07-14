@@ -19,8 +19,13 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { dbService, authService } from "../functions/util/fbase";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
-const cron = require('cron')
+const cron = require("cron");
 
 // const styles = (theme) => ({
 //   ...theme,
@@ -69,12 +74,20 @@ const styles = (theme) => ({
   progress: {
     position: "absolute",
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 });
 class AddWork extends Component {
   state = {
     description: "",
     dueDate: new Date(),
     open: false,
+    notification: 5,
   };
   addWork = (event) => {
     // event.preventDefault();
@@ -109,8 +122,14 @@ class AddWork extends Component {
     this.setState({ open: false });
   };
   handleChange = (event) => {
+    console.log(event);
     this.setState({
       [event.target.name]: event.target.value,
+    });
+  };
+  handleNotificationChange = (event) => {
+    this.setState({
+      notification: event.target.value,
     });
   };
   handleSubmit = () => {
@@ -190,6 +209,19 @@ class AddWork extends Component {
                 />
               </Grid>
             </MuiPickersUtilsProvider>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="notification">Notification settings</InputLabel>
+              <Select
+                labelId="notification"
+                id="notification"
+                value={this.state.notification}
+                onChange={this.handleNotificationChange}
+              >
+                <MenuItem value={5}>5 minutes</MenuItem>
+                <MenuItem value={10}>10 minutes</MenuItem>
+                <MenuItem value={15}>15 minutes</MenuItem>
+              </Select>
+            </FormControl>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">

@@ -11,7 +11,7 @@ import Divider from "@material-ui/core/Divider";
 import AddColumn from "../components/AddColumn";
 import Box from "@material-ui/core/Box";
 
-const cron = require('cron')
+const cron = require("cron");
 
 const styles = (theme) => ({
   paper: {
@@ -118,7 +118,9 @@ class ListDisplay extends Component {
                   countOfOverdueWorks++;
                 }
               });
-              new Notification('You have ' + countOfOverdueWorks + ' tasks overdue!')
+              new Notification(
+                "You have " + countOfOverdueWorks + " tasks overdue!"
+              );
               return work;
             })
             .then((works) => {
@@ -134,11 +136,10 @@ class ListDisplay extends Component {
       .catch((err) => {
         console.error(err);
       });
-
   }
   render() {
     const { classes } = this.props;
-    if (true) {
+    if (localStorage.authenticated) {
       let value = 0;
       let listOfWork = this.state.columns ? (
         this.state.columns.map((column) => {

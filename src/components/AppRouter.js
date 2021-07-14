@@ -18,6 +18,7 @@ const muitheme = createMuiTheme(theme);
 
 const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
+  localStorage.authenticated = true;
   return (
     <>
       <MuiThemeProvider theme={muitheme}>

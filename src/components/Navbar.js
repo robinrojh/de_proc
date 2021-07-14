@@ -19,6 +19,7 @@ class Navbar extends Component {
   handleLogout = () => {
     console.log("logout");
     authService.signOut();
+    localStorage.removeItem("authenticated");
     this.setState({
       authenticated: false,
     });

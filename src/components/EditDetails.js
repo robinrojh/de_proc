@@ -90,7 +90,7 @@ class EditDetails extends Component {
       .then((doc) => {
         const modifiedWork = {
           description: this.state.description,
-          dueDate: this.state.dueDate,
+          dueDate: this.state.dueDate.toISOString(),
           completed: doc.data().completed,
           owner: doc.data().owner,
         };
@@ -126,7 +126,7 @@ class EditDetails extends Component {
   };
   handleSubmit = () => {
     this.editDetails();
-    console.log(this.state.dueDate)
+    console.log(this.state.dueDate);
     this.props.edit(
       this.state.description,
       this.state.dueDate,
