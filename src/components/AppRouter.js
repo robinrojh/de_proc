@@ -13,12 +13,57 @@ import Navbar from "./Navbar";
 import theme from "../functions/util/theme";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 import ListDisplay from "./ListDisplay";
+import { useEffect } from "react";
+import { authService, dbService } from "../functions/util/fbase";
 
+const cron = require("cron");
 const muitheme = createMuiTheme(theme);
 
 const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
   localStorage.authenticated = true;
+  useEffect(() => {
+    dbService.collection('users')
+      .doc(authService.currentUser.email)
+      .collection('lists')
+      .get()
+      .then((listQuerySnapshot) => {
+        listQuerySnapshot.docs.forEach((listDoc) => {
+          dbService.collection('users')
+            .doc(authService.currentUser.email)
+            .collection('lists')
+            .doc(listDoc.data().title)
+            .collection('columns')
+            .get()
+            .then((columnQuerySnapshot) => {
+              columnQuerySnapshot.docs.forEach((columnDoc) => {
+                dbService.collection('users')
+                  .doc(authService.currentUser.email)
+                  .collection('lists')
+                  .doc(listDoc.data().title)
+                  .collection('columns')
+                  .doc(columnDoc.data().title)
+                  .collection('works')
+                  .get()
+                  .then((workQuerySnapshot) => {
+                    workQuerySnapshot.docs.forEach((workDoc) => {
+                      const dueDate = new Date(workDoc.data().dueDate);
+                      const notificationTiming = workDoc.data().notification;
+                      dueDate.setMinutes(dueDate.getMinutes() - notificationTiming);
+                      if (dueDate > new Date()) {
+                        new cron.CronJob(dueDate, () => {
+                          new Notification('notification for ' + workDoc.data().description);
+                          console.log('notification fired for the work: ' + workDoc.data().description)
+                        }).start();
+                      }
+                    })
+                  })
+              })
+            })
+        })
+      })
+  }, [])
+
   return (
     <>
       <MuiThemeProvider theme={muitheme}>

@@ -64,10 +64,6 @@ class Navbar extends Component {
                 {" "}
                 Home
               </Button>
-              <Button color="inherit" component={Link} to="/Dashboard">
-                {" "}
-                List
-              </Button>
             </Fragment>
           )}
         </Toolbar>

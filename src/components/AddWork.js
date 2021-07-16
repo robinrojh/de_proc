@@ -96,6 +96,7 @@ class AddWork extends Component {
       dueDate: this.state.dueDate.toISOString(),
       owner: authService.currentUser.email,
       completed: false,
+      notification: this.state.notification
     };
     dbService
       .collection("users")
@@ -109,11 +110,6 @@ class AddWork extends Component {
       .catch((err) => {
         console.error(err);
       });
-    // const job = new cron.CronJob(this.state.dueDate, () => {
-    //   new Notification('Hello!');
-    //   console.log('hello')
-    // })
-    // job.start()
   };
   handleOpen = () => {
     this.setState({ open: true });
@@ -122,7 +118,6 @@ class AddWork extends Component {
     this.setState({ open: false });
   };
   handleChange = (event) => {
-    console.log(event);
     this.setState({
       [event.target.name]: event.target.value,
     });
@@ -145,6 +140,15 @@ class AddWork extends Component {
     console.log(this.props.column);
     this.props.add(this.props.columnName, newWork);
     this.handleClose();
+    const date = new Date(this.state.dueDate);
+    date.setMinutes(date.getMinutes() - this.state.notification);
+    if (date > new Date()) {
+      const job = new cron.CronJob(date, () => {
+        new Notification('notification for ' + this.state.description);
+        console.log('notification for ' + this.state.description + 'fired.')
+      })
+      job.start()
+    }
   };
   handleDuedateChange = (event) => {
     this.setState({

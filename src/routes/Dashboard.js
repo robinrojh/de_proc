@@ -12,6 +12,8 @@ import AddList from "../components/AddList";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 
+const cron = require("cron");
+
 const styles = (theme) => ({
   paper: {
     textAlign: "center",
@@ -77,7 +79,6 @@ class Dashboard extends Component {
             </Grid>
           );
         })
-        new Notification('Dashboard Notif')
         this.setState({
           listArray: componentList
         });
@@ -85,10 +86,56 @@ class Dashboard extends Component {
   };
 
   /**
+   * sets up notification when the user refreshes the page
+   */
+  setUpNotification = () => {
+    // dbService.collection('users')
+    //   .doc(authService.currentUser.email)
+    //   .collection('lists')
+    //   .get()
+    //   .then((listQuerySnapshot) => {
+    //     listQuerySnapshot.docs.forEach((listDoc) => {
+    //       dbService.collection('users')
+    //         .doc(authService.currentUser.email)
+    //         .collection('lists')
+    //         .doc(listDoc.data().title)
+    //         .collection('columns')
+    //         .get()
+    //         .then((columnQuerySnapshot) => {
+    //           columnQuerySnapshot.docs.forEach((columnDoc) => {
+    //             dbService.collection('users')
+    //               .doc(authService.currentUser.email)
+    //               .collection('lists')
+    //               .doc(listDoc.data().title)
+    //               .collection('columns')
+    //               .doc(columnDoc.data().title)
+    //               .collection('works')
+    //               .get()
+    //               .then((workQuerySnapshot) => {
+    //                 workQuerySnapshot.docs.forEach((workDoc) => {
+    //                   const dueDate = new Date(workDoc.data().dueDate);
+    //                   const notificationTiming = workDoc.data().notification;
+    //                   dueDate.setMinutes(dueDate.getMinutes() - notificationTiming);
+    //                   if (dueDate > new Date()) {
+    //                     new cron.CronJob(dueDate, () => {
+    //                       new Notification('notification for ' + workDoc.data().description);
+    //                       console.log('notification fired for the work: ' + workDoc.data().description)
+    //                     }).start();
+    //                   }
+    //                 })
+    //               })
+    //           })
+    //         })
+    //     })
+    //   })
+  }
+
+  /**
    * React life cycle method; fetches firestore data before the page loads
    */
   componentDidMount = () => {
     this.getMyLists();
+    this.setUpNotification();
   };
 
   /**

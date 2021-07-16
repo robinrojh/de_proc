@@ -75,13 +75,13 @@ class ListDisplay extends Component {
     });
   };
 
-  componentDidMount() {
+  async fetchColumnsAndWorks() {
     const title = this.props.match.params.listTitle;
     this.setState({
       listName: title,
     });
     let countOfOverdueWorks = 0;
-    dbService
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
@@ -94,8 +94,8 @@ class ListDisplay extends Component {
         });
       })
       .then(() => {
-        this.state.columns.forEach((col) => {
-          dbService
+        this.state.columns.forEach(async (col) => {
+          await dbService
             .collection("users")
             .doc(authService.currentUser.email)
             .collection("lists")
@@ -118,9 +118,9 @@ class ListDisplay extends Component {
                   countOfOverdueWorks++;
                 }
               });
-              new Notification(
-                "You have " + countOfOverdueWorks + " tasks overdue!"
-              );
+              // new Notification(
+              //   "You have " + countOfOverdueWorks + " tasks overdue!"
+              // );
               return work;
             })
             .then((works) => {
@@ -136,6 +136,10 @@ class ListDisplay extends Component {
       .catch((err) => {
         console.error(err);
       });
+  }
+
+  async componentDidMount() {
+    await this.fetchColumnsAndWorks();
   }
   render() {
     const { classes } = this.props;
@@ -222,6 +226,7 @@ class ListDisplay extends Component {
               Signup
             </Button>
           </div>
+
         </Paper>
       );
     }

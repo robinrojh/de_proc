@@ -2,6 +2,7 @@ import AppRouter from './components/AppRouter'
 import './App.css';
 import { useEffect, useState } from "react";
 import { authService } from "./functions/util/fbase";
+import { Redirect } from 'react-router';
 
 const App = () => {
   // Provides a basic router for all the paths in the website.
@@ -24,7 +25,9 @@ const App = () => {
   return (
     <>
       {init ?
-        <AppRouter isLoggedIn={isLoggedIn}></AppRouter>
+        <>
+          <AppRouter isLoggedIn={isLoggedIn}></AppRouter>
+        </>
         :
         <div>
           Initializing...
