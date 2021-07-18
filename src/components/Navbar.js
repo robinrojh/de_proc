@@ -40,7 +40,7 @@ class Navbar extends Component {
                   <ListIcon color="primary" />
                 </MyButton>
               </Link>
-              <Link to="/">
+              <Link to="/Notification">
                 <MyButton tip="Notifications">
                   <NotificationsIcon color="primary" />
                 </MyButton>

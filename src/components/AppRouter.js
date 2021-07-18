@@ -9,6 +9,7 @@ import About from "../routes/About";
 import SignIn from "../routes/SignIn";
 import SignUp from "../routes/SignUp";
 import Dashboard from "../routes/Dashboard";
+import Notification from "../routes/Notification";
 import Navbar from "./Navbar";
 import theme from "../functions/util/theme";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
@@ -23,46 +24,65 @@ const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
   localStorage.authenticated = true;
   useEffect(() => {
-    dbService.collection('users')
+    dbService
+      .collection("users")
       .doc(authService.currentUser.email)
-      .collection('lists')
+      .collection("lists")
       .get()
       .then((listQuerySnapshot) => {
         listQuerySnapshot.docs.forEach((listDoc) => {
-          dbService.collection('users')
+          dbService
+            .collection("users")
             .doc(authService.currentUser.email)
-            .collection('lists')
+            .collection("lists")
             .doc(listDoc.data().title)
-            .collection('columns')
+            .collection("columns")
             .get()
             .then((columnQuerySnapshot) => {
               columnQuerySnapshot.docs.forEach((columnDoc) => {
-                dbService.collection('users')
+                dbService
+                  .collection("users")
                   .doc(authService.currentUser.email)
-                  .collection('lists')
+                  .collection("lists")
                   .doc(listDoc.data().title)
-                  .collection('columns')
+                  .collection("columns")
                   .doc(columnDoc.data().title)
-                  .collection('works')
+                  .collection("works")
                   .get()
                   .then((workQuerySnapshot) => {
                     workQuerySnapshot.docs.forEach((workDoc) => {
                       const dueDate = new Date(workDoc.data().dueDate);
                       const notificationTiming = workDoc.data().notification;
-                      dueDate.setMinutes(dueDate.getMinutes() - notificationTiming);
-                      if (dueDate > new Date()) {
+                      dueDate.setMinutes(
+                        dueDate.getMinutes() - notificationTiming
+                      );
+                      if (dueDate > new Date() && !workDoc.data().completed) {
                         new cron.CronJob(dueDate, () => {
-                          new Notification('notification for ' + workDoc.data().description);
-                          console.log('notification fired for the work: ' + workDoc.data().description)
+                          const notification = {
+                            content:
+                              "Notification for " + workDoc.data().description,
+                          };
+                          dbService
+                            .collection("users")
+                            .doc(authService.currentUser.email)
+                            .collection("notification")
+                            .add(notification);
+                          new Notification(
+                            "notification for " + workDoc.data().description
+                          );
+                          console.log(
+                            "notification fired for the work: " +
+                              workDoc.data().description
+                          );
                         }).start();
                       }
-                    })
-                  })
-              })
-            })
-        })
-      })
-  }, [])
+                    });
+                  });
+              });
+            });
+        });
+      });
+  }, []);
 
   return (
     <>
@@ -81,7 +101,8 @@ const AppRouter = ({ isLoggedIn }) => {
                     path="/lists/:listTitle"
                     component={ListDisplay}
                   />
-                  <Redirect to="/dashboard"></Redirect>
+                  <Route exact path="/notification" component={Notification} />
+                  {/* <Redirect to="/dashboard"></Redirect> */}
                 </>
               ) : (
                 <>
