@@ -24,14 +24,11 @@
   },
   "main": "src/electron-starter.js",
   "scripts": {
-    "forge": "electron-forge start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron .",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -52,11 +49,6 @@
     ]
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.58",
-    "@electron-forge/maker-deb": "^6.0.0-beta.58",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.58",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.58",
-    "@electron-forge/maker-zip": "^6.0.0-beta.58",
     "electron": "^13.1.2",
     "electron-is-dev": "^2.0.0"
   },
