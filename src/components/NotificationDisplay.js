@@ -3,6 +3,7 @@ import CardContent from "@material-ui/core/CardContent";
 import { Button, Typography } from "@material-ui/core";
 import React, { Component, Fragment } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
+import DeleteNotification from "./DeleteNotification";
 const styles = (theme) => ({
   paper: {
     textAlign: "center",
@@ -21,13 +22,17 @@ const styles = (theme) => ({
 class NotificationDisplay extends Component {
   state = {};
   render() {
-    const { classes, content } = this.props;
+    const { classes, notification } = this.props;
     return (
       <Card className={classes.root}>
         <CardContent>
           <Typography color="primary" varian="h4" display="inline">
-            {content}
+            {notification.content}
           </Typography>
+          <DeleteNotification
+            notification={notification}
+            delete={this.props.delete}
+          />
         </CardContent>
       </Card>
     );
