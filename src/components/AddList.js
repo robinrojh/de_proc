@@ -73,6 +73,14 @@ const styles = (theme) => ({
   },
 });
 class AddList extends Component {
+  initialState = {
+    listName: "",
+    columnName: "",
+    description: "",
+    dueDate: new Date(),
+    open: false,
+    notification: 5,
+  };
   state = {
     listName: "",
     columnName: "",
@@ -150,6 +158,9 @@ class AddList extends Component {
     };
     this.props.listAdd(this.state.listName);
     this.addList();
+    this.setState({
+      ...this.initialState,
+    });
     this.handleClose();
   };
   handleDuedateChange = (event) => {
@@ -199,7 +210,7 @@ class AddList extends Component {
                 onChange={this.handleChange}
                 fullWidth
               />
-              {/* <TextField
+              <TextField
                 name="description"
                 type="text"
                 label="Description"
@@ -210,7 +221,7 @@ class AddList extends Component {
                 value={this.state.description}
                 onChange={this.handleChange}
                 fullWidth
-              /> */}
+              />
             </form>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Grid container justify="space-around">

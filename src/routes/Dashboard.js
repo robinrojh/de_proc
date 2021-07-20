@@ -11,6 +11,8 @@ import MuiLink from "@material-ui/core/Link";
 import AddList from "../components/AddList";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import List from "../components/List";
+import DeleteList from "../components/DeleteList";
 
 const cron = require("cron");
 
@@ -58,31 +60,33 @@ class Dashboard extends Component {
       .onSnapshot((element) => {
         const lists = [];
         element.docs.forEach((list) => {
-          lists.push(list.data());
+          console.log(list.data().title);
+          lists.push(list.data().title);
         });
-        const componentList = lists.map((element) => {
-          return (
-            <Grid item xs={12} key={element.title}>
-              <Card className={classes.card}>
-                <CardContent className={classes.content}>
-                  <MuiLink
-                    component={Link}
-                    to={`/lists/${element.title}`}
-                    color="primary"
-                    variant="h5"
-                  >
-                    {element.title}
-                    <hr />
-                  </MuiLink>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })
+        // const componentList = lists.map((element) => {
+        //   return (
+        //     <List listName={element.title} />
+        //     // <Grid item xs={12} key={element.title}>
+        //     //   <Card className={classes.card}>
+        //     //     <CardContent className={classes.content}>
+        //     //       <MuiLink
+        //     //         component={Link}
+        //     //         to={`/lists/${element.title}`}
+        //     //         color="primary"
+        //     //         variant="h5"
+        //     //       >
+        //     //         {element.title}
+        //     //         <hr />
+        //     //       </MuiLink>
+        //     //     </CardContent>
+        //     //   </Card>
+        //     // </Grid>
+        //   );
+        // });
         this.setState({
-          listArray: componentList
+          listArray: lists,
         });
-      })
+      });
   };
 
   /**
@@ -128,7 +132,7 @@ class Dashboard extends Component {
     //         })
     //     })
     //   })
-  }
+  };
 
   /**
    * React life cycle method; fetches firestore data before the page loads
@@ -149,13 +153,27 @@ class Dashboard extends Component {
     });
   };
 
+  deleteList = (listName) => {
+    let newList = this.state.listArray;
+    let ind = this.state.listArray.indexOf(listName);
+    newList.splice(ind, 1);
+    this.setState({
+      listArray: newList,
+    });
+  };
+
   render = () => {
+    console.log(this.state.listArray);
     const { classes } = this.props;
+    const componentList = this.state.listArray.map((listName) => (
+      <List listName={listName} />
+    ));
     return (
       <div>
         <AddList listAdd={this.listAdd} />
+        <DeleteList lists={this.state.listArray} delete={this.deleteList} />
         <Grid container spacing={3} className={classes.root}>
-          {this.state.listArray}
+          {componentList}
         </Grid>
       </div>
     );

@@ -10,6 +10,8 @@ import AddWork from "../components/AddWork";
 import Divider from "@material-ui/core/Divider";
 import AddColumn from "../components/AddColumn";
 import Box from "@material-ui/core/Box";
+import DeleteColumn from "./DeleteColumn";
+import { Delete } from "@material-ui/icons";
 
 const cron = require("cron");
 
@@ -75,6 +77,15 @@ class ListDisplay extends Component {
     });
   };
 
+  deleteColumn = (columnName) => {
+    let modifiedColumns = this.state.columns;
+    let ind = this.state.columns.indexOf(columnName);
+    modifiedColumns.splice(ind, 1);
+    this.setState({
+      columns: modifiedColumns,
+      [columnName]: [],
+    });
+  };
   async fetchColumnsAndWorks() {
     const title = this.props.match.params.listTitle;
     this.setState({
@@ -197,6 +208,11 @@ class ListDisplay extends Component {
             addNewColumn={this.addNewColumn}
             listName={this.state.listName}
           />
+          <DeleteColumn
+            columns={this.state.columns}
+            delete={this.deleteColumn}
+            listName={this.state.listName}
+          />
           <Grid container spacing={3} className={classes.root}>
             {listOfWork}
           </Grid>
@@ -226,7 +242,6 @@ class ListDisplay extends Component {
               Signup
             </Button>
           </div>
-
         </Paper>
       );
     }

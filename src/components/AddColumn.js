@@ -75,6 +75,13 @@ const styles = (theme) => ({
   },
 });
 class AddWork extends Component {
+  initialState = {
+    columnName: "",
+    description: "",
+    dueDate: new Date(),
+    open: false,
+    notification: 5,
+  };
   state = {
     columnName: "",
     description: "",
@@ -143,6 +150,9 @@ class AddWork extends Component {
     };
     this.props.addNewColumn(this.state.columnName, workDetails);
     this.addColumn();
+    this.setState({
+      ...this.initialState,
+    });
     this.handleClose();
   };
   handleDuedateChange = (event) => {
