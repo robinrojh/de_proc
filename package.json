@@ -1,6 +1,10 @@
 {
   "name": "de_proc",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "author": {
+    "name": "Roh Yong Gi, Chung Yunseong"
+  },
+  "description": "To-do list application",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^1.3.13",
@@ -14,6 +18,8 @@
     "cron": "^1.8.2",
     "date-fns": "^2.22.1",
     "dayjs": "^1.10.5",
+    "electron-compile": "^6.4.4",
+    "electron-is-dev": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "firebase": "^8.6.7",
     "react": "^17.0.2",
@@ -28,7 +34,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron ."
+    "electron": "electron .",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "eslintConfig": {
     "extends": [
@@ -49,35 +57,43 @@
     ]
   },
   "devDependencies": {
-    "electron": "^13.1.2",
-    "electron-is-dev": "^2.0.0"
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "electron-forge": "^5.2.4",
+    "electron-prebuilt-compile": "8.2.0"
   },
   "proxy": "https://asia-northeast3-deproc-398f6.cloudfunctions.net/api",
   "config": {
     "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "de_proc"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {
+        "packageManager": "npm"
+      },
+      "electronWinstallerConfig": {
+        "name": "de_proc"
+      },
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {},
+      "github_repository": {
+        "owner": "",
+        "name": ""
+      },
+      "windowsStoreConfig": {
+        "packageName": "",
+        "name": "de_proc"
+      }
     }
   }
 }

@@ -33,7 +33,7 @@ class Navbar extends Component {
     return (
       <AppBar>
         <Toolbar className="nav-container">
-          {this.state.authenticated ? (
+          {authService.currentUser ? (
             <Fragment>
               <Link to="/Dashboard">
                 <MyButton tip="List">

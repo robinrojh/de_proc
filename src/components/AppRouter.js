@@ -23,45 +23,47 @@ const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
   localStorage.authenticated = true;
   useEffect(() => {
-    dbService.collection('users')
-      .doc(authService.currentUser.email)
-      .collection('lists')
-      .get()
-      .then((listQuerySnapshot) => {
-        listQuerySnapshot.docs.forEach((listDoc) => {
-          dbService.collection('users')
-            .doc(authService.currentUser.email)
-            .collection('lists')
-            .doc(listDoc.data().title)
-            .collection('columns')
-            .get()
-            .then((columnQuerySnapshot) => {
-              columnQuerySnapshot.docs.forEach((columnDoc) => {
-                dbService.collection('users')
-                  .doc(authService.currentUser.email)
-                  .collection('lists')
-                  .doc(listDoc.data().title)
-                  .collection('columns')
-                  .doc(columnDoc.data().title)
-                  .collection('works')
-                  .get()
-                  .then((workQuerySnapshot) => {
-                    workQuerySnapshot.docs.forEach((workDoc) => {
-                      const dueDate = new Date(workDoc.data().dueDate);
-                      const notificationTiming = workDoc.data().notification;
-                      dueDate.setMinutes(dueDate.getMinutes() - notificationTiming);
-                      if (dueDate > new Date()) {
-                        new cron.CronJob(dueDate, () => {
-                          new Notification('notification for ' + workDoc.data().description);
-                          console.log('notification fired for the work: ' + workDoc.data().description)
-                        }).start();
-                      }
+    if (authService.currentUser) {
+      dbService.collection('users')
+        .doc(authService.currentUser.email)
+        .collection('lists')
+        .get()
+        .then((listQuerySnapshot) => {
+          listQuerySnapshot.docs.forEach((listDoc) => {
+            dbService.collection('users')
+              .doc(authService.currentUser.email)
+              .collection('lists')
+              .doc(listDoc.data().title)
+              .collection('columns')
+              .get()
+              .then((columnQuerySnapshot) => {
+                columnQuerySnapshot.docs.forEach((columnDoc) => {
+                  dbService.collection('users')
+                    .doc(authService.currentUser.email)
+                    .collection('lists')
+                    .doc(listDoc.data().title)
+                    .collection('columns')
+                    .doc(columnDoc.data().title)
+                    .collection('works')
+                    .get()
+                    .then((workQuerySnapshot) => {
+                      workQuerySnapshot.docs.forEach((workDoc) => {
+                        const dueDate = new Date(workDoc.data().dueDate);
+                        const notificationTiming = workDoc.data().notification;
+                        dueDate.setMinutes(dueDate.getMinutes() - notificationTiming);
+                        if (dueDate > new Date()) {
+                          new cron.CronJob(dueDate, () => {
+                            new Notification('notification for ' + workDoc.data().description);
+                            console.log('notification fired for the work: ' + workDoc.data().description)
+                          }).start();
+                        }
+                      })
                     })
-                  })
+                })
               })
-            })
+          })
         })
-      })
+    }
   }, [])
 
   return (
@@ -71,7 +73,7 @@ const AppRouter = ({ isLoggedIn }) => {
           <Navbar authenticated={isLoggedIn} />
           <div className="container">
             <Switch>
-              {isLoggedIn ? (
+              {authService.currentUser ? (
                 <>
                   <Route exact path="/" component={Home} />
                   <Route exact path="/about" component={About} />
