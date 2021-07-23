@@ -9,6 +9,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+
 import { dbService, authService } from "../functions/util/fbase";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -193,7 +195,7 @@ class EditColumn extends Component {
       <Fragment>
         <Tooltip title="Edit columns" placement="top">
           <IconButton onClick={this.handleOpen} className={classes.button}>
-            <DeleteForeverIcon color="primary" />
+            <EditIcon color="primary" />
           </IconButton>
         </Tooltip>
         <Dialog
