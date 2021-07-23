@@ -14,7 +14,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Checkbox from "@material-ui/core/Checkbox";
-import { auth } from "firebase-admin";
+// import { auth } from "firebase-admin";
 
 const styles = (theme) => ({
   palette: {

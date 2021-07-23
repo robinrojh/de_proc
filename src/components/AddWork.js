@@ -88,6 +88,8 @@ class AddWork extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
+    workStart: 9,
+    workEnd: 17
   };
   addWork = (event) => {
     // event.preventDefault();
@@ -224,6 +226,41 @@ class AddWork extends Component {
                 <MenuItem value={5}>5 minutes</MenuItem>
                 <MenuItem value={10}>10 minutes</MenuItem>
                 <MenuItem value={15}>15 minutes</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="workHour">Work hours</InputLabel>
+              <Select
+                labelId="workStart"
+                id="workStart"
+                value={this.state.workStart}
+                onChange={this.handleChange}
+              >
+                <MenuItem value={4}>4 am</MenuItem>
+                <MenuItem value={5}>5 am</MenuItem>
+                <MenuItem value={6}>6 am</MenuItem>
+                <MenuItem value={7}>7 am</MenuItem>
+                <MenuItem value={8}>8 am</MenuItem>
+                <MenuItem value={9}>9 am</MenuItem>
+                <MenuItem value={10}>10 am</MenuItem>
+                <MenuItem value={11}>11 am</MenuItem>
+                <MenuItem value={12}>12 pm</MenuItem>
+              </Select>
+              <Select
+                labelId="workEnd"
+                id="workEnd"
+                value={this.state.workEnd}
+                onChange={this.handleChange}
+              >
+                <MenuItem value={16}>4 pm</MenuItem>
+                <MenuItem value={17}>5 pm</MenuItem>
+                <MenuItem value={18}>6 pm</MenuItem>
+                <MenuItem value={19}>7 pm</MenuItem>
+                <MenuItem value={20}>8 pm</MenuItem>
+                <MenuItem value={21}>9 pm</MenuItem>
+                <MenuItem value={22}>10 pm</MenuItem>
+                <MenuItem value={23}>11 pm</MenuItem>
+                <MenuItem value={24}>12 am</MenuItem>
               </Select>
             </FormControl>
           </DialogContent>

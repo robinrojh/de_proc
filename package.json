@@ -1,6 +1,20 @@
 {
   "name": "de_proc",
   "version": "0.1.0",
+  "author": "Chung Yunseong, Roh Yong Gi",
+  "build": {
+    "appId": "deproc.todolist.app",
+    "extends": null,
+    "directories": {
+      "output": "../dist"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true
+    }
+  },
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^1.3.13",
@@ -20,15 +34,18 @@
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "web-vitals": "^2.0.1"
+    "web-vitals": "^2.0.1",
+    "electron-is-dev": "^2.0.0"
   },
-  "main": "src/electron-starter.js",
+  "main": "public/electron.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron ."
+    "electron": "electron .",
+    "pack": "electron-builder -w",
+    "pack-mac": "electron-builder -m"
   },
   "eslintConfig": {
     "extends": [
@@ -50,34 +67,8 @@
   },
   "devDependencies": {
     "electron": "^13.1.2",
+    "electron-builder": "^22.11.7",
     "electron-is-dev": "^2.0.0"
   },
-  "proxy": "https://asia-northeast3-deproc-398f6.cloudfunctions.net/api",
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "de_proc"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
-  }
+  "proxy": "https://asia-northeast3-deproc-398f6.cloudfunctions.net/api"
 }

@@ -80,6 +80,8 @@ class AddList extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
+    workStart: 9,
+    workEnd: 5
   };
   state = {
     listName: "",
@@ -88,6 +90,8 @@ class AddList extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
+    workStart: 9,
+    workEnd: 5
   };
   addList = (event) => {
     console.log("adding");
@@ -108,6 +112,8 @@ class AddList extends Component {
       .set({
         owner: authService.currentUser.email,
         title: this.state.listName,
+        workStart: this.state.workStart,
+        workEnd: this.state.workEnd
       });
     dbService
       .collection("users")
@@ -261,6 +267,41 @@ class AddList extends Component {
                 <MenuItem value={5}>5 minutes</MenuItem>
                 <MenuItem value={10}>10 minutes</MenuItem>
                 <MenuItem value={15}>15 minutes</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="workhour">Work hours\</InputLabel>
+              <Select
+                labelId="workStart"
+                id="workStart"
+                value={this.state.workStart}
+                onChange={this.handleChange}
+              >
+                <MenuItem value={4}>4 am</MenuItem>
+                <MenuItem value={5}>5 am</MenuItem>
+                <MenuItem value={6}>6 am</MenuItem>
+                <MenuItem value={7}>7 am</MenuItem>
+                <MenuItem value={8}>8 am</MenuItem>
+                <MenuItem value={9}>9 am</MenuItem>
+                <MenuItem value={10}>10 am</MenuItem>
+                <MenuItem value={11}>11 am</MenuItem>
+                <MenuItem value={12}>12 pm</MenuItem>
+              </Select>
+              <Select
+                labelId="workEnd"
+                id="workEnd"
+                value={this.state.workEnd}
+                onChange={this.handleChange}
+              >
+                <MenuItem value={4}>4 pm</MenuItem>
+                <MenuItem value={5}>5 pm</MenuItem>
+                <MenuItem value={6}>6 pm</MenuItem>
+                <MenuItem value={7}>7 pm</MenuItem>
+                <MenuItem value={8}>8 pm</MenuItem>
+                <MenuItem value={9}>9 pm</MenuItem>
+                <MenuItem value={10}>10 pm</MenuItem>
+                <MenuItem value={11}>11 pm</MenuItem>
+                <MenuItem value={12}>12 am</MenuItem>
               </Select>
             </FormControl>
           </DialogContent>
