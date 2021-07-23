@@ -18,6 +18,10 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { dbService, authService } from "../functions/util/fbase";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
 const styles = (theme) => ({
   palette: {
@@ -67,8 +71,10 @@ class EditDetails extends Component {
   state = {
     description: "",
     dueDate: new Date(),
+    completed: false,
     open: false,
     workId: "",
+    notification: 5,
   };
   editDetails = (event) => {
     // if (req.body.description.trim() === "") {
@@ -90,9 +96,10 @@ class EditDetails extends Component {
       .then((doc) => {
         const modifiedWork = {
           description: this.state.description,
-          dueDate: this.state.dueDate.toISOString(),
+          dueDate: this.state.dueDate,
           completed: doc.data().completed,
           owner: doc.data().owner,
+          notification: this.state.notification,
         };
         console.log(modifiedWork);
         work.update(modifiedWork);
@@ -105,7 +112,9 @@ class EditDetails extends Component {
     this.setState({
       description: work.description,
       dueDate: work.dueDate,
+      completed: work.completed,
       workId: work.workId,
+      notification: work.notification,
     });
   };
   handleOpen = () => {
@@ -124,12 +133,18 @@ class EditDetails extends Component {
       [event.target.name]: event.target.value,
     });
   };
+  handleNotificationChange = (event) => {
+    this.setState({
+      notification: event.target.value,
+    });
+  };
   handleSubmit = () => {
     this.editDetails();
     console.log(this.state.dueDate);
     this.props.edit(
       this.state.description,
       this.state.dueDate,
+      this.state.notification,
       this.props.work,
       this.props.columnName
     );
@@ -137,7 +152,7 @@ class EditDetails extends Component {
   };
   handleDuedateChange = (event) => {
     this.setState({
-      dueDate: event,
+      dueDate: event.toISOString(),
     });
   };
   render() {
@@ -198,6 +213,19 @@ class EditDetails extends Component {
                 />
               </Grid>
             </MuiPickersUtilsProvider>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="notification">Notification settings</InputLabel>
+              <Select
+                labelId="notification"
+                id="notification"
+                value={this.state.notification}
+                onChange={this.handleNotificationChange}
+              >
+                <MenuItem value={5}>5 minutes</MenuItem>
+                <MenuItem value={10}>10 minutes</MenuItem>
+                <MenuItem value={15}>15 minutes</MenuItem>
+              </Select>
+            </FormControl>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">

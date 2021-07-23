@@ -34,6 +34,12 @@ const styles = (theme) => ({
   typography: {
     useNextVariants: true,
   },
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+      width: "40ch",
+    },
+  },
   form: {
     textAlign: "center",
   },
@@ -43,9 +49,9 @@ const styles = (theme) => ({
   pageTitle: {
     margin: "10px auto 10ps auto",
   },
-  textField: {
-    margin: "10px auto 10ps auto",
-  },
+  //   textField: {
+  //     margin: "10px auto 10ps auto",
+  //   },
   button: {
     marginTop: 20,
     position: "relative",
@@ -69,17 +75,18 @@ const styles = (theme) => ({
   },
 });
 
-class DeleteColumns extends Component {
+class EditColumn extends Component {
   state = {};
   mapDetailsToState = (columns) => {
     this.setState({
       columns: columns,
     });
     columns.forEach((column) => {
-      console.log(column.title);
       this.setState({
-        [column.title]: {
-          selected: false,
+        [column.id]: {
+          title: column.title,
+          id: column.id,
+          edited: false,
         },
       });
     });
@@ -95,16 +102,22 @@ class DeleteColumns extends Component {
   componentDidMount() {
     this.props.columns.forEach((column) => {
       this.setState({
-        [column.title]: {
-          selected: false,
+        [column.id]: {
+          title: column.title,
+          id: column.id,
+          edited: false,
         },
       });
     });
   }
-  handleChange = (column) => {
-    this.state[column.title].selected
-      ? this.setState({ [column.title]: { selected: false } })
-      : this.setState({ [column.title]: { selected: true } });
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: {
+        title: event.target.value,
+        edited: true,
+        id: event.target.name,
+      },
+    });
   };
   handleSubmit = () => {
     // this.state.columns.forEach((column) => {
@@ -120,9 +133,10 @@ class DeleteColumns extends Component {
     //   }
     // });
     const filteredcolumn = this.state.columns.filter(
-      (column) => this.state[column.title].selected
+      (column) => this.state[column.id].edited
     );
     filteredcolumn.forEach((column) => {
+      console.log(column);
       dbService
         .collection("users")
         .doc(authService.currentUser.email)
@@ -130,37 +144,54 @@ class DeleteColumns extends Component {
         .doc(this.props.listName)
         .collection("columns")
         .doc(column.id)
-        .delete();
-      this.props.delete(column.id, column.title);
+        .update({
+          owner: authService.currentUser.email,
+          title: this.state[column.id].title,
+        });
+      this.props.edit(this.state[column.id].id, this.state[column.id].title);
     });
     console.log(filteredcolumn);
     this.handleClose();
   };
   render() {
     const { classes } = this.props;
+    console.log(this.state);
     const columnComponent =
       this.state.columns && this.state.columns.length ? (
         this.state.columns.map((column) => (
-          <Card>
-            <CardContent className={classes.content}>
-              <Typography color="primary" varian="h4" display="inline">
-                {column.title}
-              </Typography>
-              <Checkbox
-                checked={this.state[column.title].selected}
-                onChange={() => this.handleChange(column)}
-                inputProps={{ "aria-label": "primary checkbox" }}
-                color="primary"
-              />
-            </CardContent>
-          </Card>
+          //   <Card>
+          //     <CardContent className={classes.content}>
+          //       <Typography color="primary" varian="h4" display="inline">
+          //         {column}
+          //       </Typography>
+          //       <Checkbox
+          //         checked={this.state[column].selected}
+          //         onChange={() => this.handleChange(column)}
+          //         inputProps={{ "aria-label": "primary checkbox" }}
+          //         color="primary"
+          //       />
+          //     </CardContent>
+          //   </Card>
+          <form className={classes.root}>
+            <TextField
+              id={"standard-basic"}
+              name={column.id}
+              type="text"
+              label={column.title}
+              placeholder="Work description"
+              className={classes.textfield}
+              value={this.state[column.id].title}
+              onChange={this.handleChange}
+              fullwidth
+            />
+          </form>
         ))
       ) : (
         <p>Loading</p>
       );
     return (
       <Fragment>
-        <Tooltip title="Delete columns" placement="top">
+        <Tooltip title="Edit columns" placement="top">
           <IconButton onClick={this.handleOpen} className={classes.button}>
             <DeleteForeverIcon color="primary" />
           </IconButton>
@@ -171,14 +202,14 @@ class DeleteColumns extends Component {
           fullWidth
           maxWidth="sm"
         >
-          <DialogTitle>Delete your column</DialogTitle>
+          <DialogTitle>Edit your column names</DialogTitle>
           <DialogContent>{columnComponent}</DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
             <Button onClick={this.handleSubmit} color="primary">
-              Delete
+              Edit
             </Button>
           </DialogActions>
         </Dialog>
@@ -187,4 +218,4 @@ class DeleteColumns extends Component {
   }
 }
 
-export default withStyles(styles)(DeleteColumns);
+export default withStyles(styles)(EditColumn);

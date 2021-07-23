@@ -12,6 +12,7 @@ import AddColumn from "../components/AddColumn";
 import Box from "@material-ui/core/Box";
 import DeleteColumn from "./DeleteColumn";
 import { Delete } from "@material-ui/icons";
+import EditColumn from "./EditColumn";
 
 const cron = require("cron");
 
@@ -35,26 +36,45 @@ class ListDisplay extends Component {
   state = {
     listName: "",
     columns: [],
+    rawColumns: [],
   };
 
-  addNewColumn = (columnName, newWork) => {
+  addNewColumn = (column, newWork) => {
     let newColumns = this.state.columns;
+    let newRawColumns = this.state.rawColumns;
+    newRawColumns.push(column);
     let work = [];
     work.push(newWork);
-    newColumns.push(columnName);
+    newColumns.push(column.id);
     this.setState({
       columns: newColumns,
-      [columnName]: work,
+      [column.id]: work,
+      rawColumns: newRawColumns,
     });
   };
 
-  editWork = (newDescription, newDueDate, oldWork, column) => {
+  editColumn = (columnId, columnName) => {
+    let prevTitle = "";
+    let newRawColumn = this.state.rawColumns;
+    newRawColumn.map((col) => {
+      if (col.id == columnId) {
+        prevTitle = col.title;
+        col.title = columnName;
+      }
+    });
+    console.log(newRawColumn);
+    this.setState({
+      rawColumns: newRawColumn,
+    });
+  };
+  editWork = (newDescription, newDueDate, newNotification, oldWork, column) => {
     console.log(column);
     let newColumn = this.state[column];
     console.log(newColumn);
     let ind = this.state[column].indexOf(oldWork);
     newColumn[ind].description = newDescription;
     newColumn[ind].dueDate = newDueDate;
+    newColumn[ind].notification = newNotification;
     this.setState({
       [column]: newColumn,
     });
@@ -77,14 +97,27 @@ class ListDisplay extends Component {
     });
   };
 
-  deleteColumn = (columnName) => {
+  deleteColumn = (columnId, columnName) => {
+    let modifiedRawColumn = this.state.rawColumns;
+    let newRawColumn = this.state.rawColumns.filter(
+      (col) => col.id == columnId
+    );
+    // newRawColumn.map((col) => {
+    //   if (col.id == columnId) {
+    //     col.title = columnName;
+    //   }
+    // });
+    let index = this.state.rawColumns.indexOf(newRawColumn[0]);
+    modifiedRawColumn.splice(index, 1);
     let modifiedColumns = this.state.columns;
     let ind = this.state.columns.indexOf(columnName);
     modifiedColumns.splice(ind, 1);
     this.setState({
       columns: modifiedColumns,
+      rawColumns: modifiedRawColumn,
       [columnName]: [],
     });
+    console.log(modifiedRawColumn);
   };
   async fetchColumnsAndWorks() {
     const title = this.props.match.params.listTitle;
@@ -101,10 +134,13 @@ class ListDisplay extends Component {
       .get()
       .then((data) => {
         data.forEach((doc) => {
-          this.state.columns.push(doc.data().title);
+          //   this.state.columns.push(doc.data().title);
+          this.state.columns.push(doc.id);
+          this.state.rawColumns.push({ id: doc.id, title: doc.data().title });
         });
       })
       .then(() => {
+        console.log(this.state.rawColumns);
         this.state.columns.forEach(async (col) => {
           await dbService
             .collection("users")
@@ -123,6 +159,8 @@ class ListDisplay extends Component {
                   description: doc.data().description,
                   dueDate: doc.data().dueDate,
                   owner: doc.data().owner,
+                  completed: doc.data().completed,
+                  notification: doc.data().notification,
                   workId: doc.id,
                 });
                 if (new Date(doc.data().dueDate) <= new Date()) {
@@ -138,6 +176,9 @@ class ListDisplay extends Component {
               this.setState({
                 [col]: works,
               });
+            })
+            .then(() => {
+              console.log(this.state);
             });
         });
       })
@@ -158,6 +199,7 @@ class ListDisplay extends Component {
       let value = 0;
       let listOfWork = this.state.columns ? (
         this.state.columns.map((column) => {
+          console.log(this.state);
           let workList = this.state[column] ? (
             this.state[column].map((works) => {
               return (
@@ -175,6 +217,13 @@ class ListDisplay extends Component {
             <p>Loading...</p>
           );
           value++;
+          console.log(column);
+          const columnName = this.state.rawColumns.filter(
+            (col) => col.id == column
+          )[0];
+          console.log(columnName);
+          console.log(this.state);
+
           return (
             <Fragment key={value}>
               <Divider orientation="vertical" flexItem />
@@ -182,7 +231,7 @@ class ListDisplay extends Component {
               <Grid item xs>
                 <Typography variant="h6">
                   <Box fontStyle="oblique" fontFamily="Monospace">
-                    {column}
+                    {columnName.title}
                   </Box>
                 </Typography>
                 <Paper className={classes.paper}>
@@ -209,8 +258,13 @@ class ListDisplay extends Component {
             listName={this.state.listName}
           />
           <DeleteColumn
-            columns={this.state.columns}
+            columns={this.state.rawColumns}
             delete={this.deleteColumn}
+            listName={this.state.listName}
+          />
+          <EditColumn
+            columns={this.state.rawColumns}
+            edit={this.editColumn}
             listName={this.state.listName}
           />
           <Grid container spacing={3} className={classes.root}>

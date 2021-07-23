@@ -97,35 +97,43 @@ class AddWork extends Component {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
     };
-    axios
-      .post("/columns", newWork)
-      .then((res) => {
-        console.log(res.data);
-        this.props.reload(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    // dbService
+    //   .collection("users")
+    //   .doc(authService.currentUser.email)
+    //   .collection("lists")
+    //   .doc(this.props.listName)
+    //   .collection("columns")
+    //   .doc(this.state.columnName)
+    //   .set({
+    //     owner: authService.currentUser.email,
+    //     title: this.state.columnName,
+    //   });
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
       .doc(this.props.listName)
       .collection("columns")
-      .doc(this.state.columnName)
-      .set({
+      .add({
         owner: authService.currentUser.email,
         title: this.state.columnName,
+      })
+      .then((doc) => {
+        this.setState({
+          id: doc.id,
+        });
+      })
+      .then(() => {
+        dbService
+          .collection("users")
+          .doc(authService.currentUser.email)
+          .collection("lists")
+          .doc(this.props.listName)
+          .collection("columns")
+          .doc(this.state.id)
+          .collection("works")
+          .add(newWork);
       });
-    dbService
-      .collection("users")
-      .doc(authService.currentUser.email)
-      .collection("lists")
-      .doc(this.props.listName)
-      .collection("columns")
-      .doc(this.state.columnName)
-      .collection("works")
-      .add(newWork);
   };
   handleOpen = () => {
     this.setState({ open: true });
@@ -148,7 +156,11 @@ class AddWork extends Component {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
     };
-    this.props.addNewColumn(this.state.columnName, workDetails);
+    const column = {
+      id: this.state.id,
+      title: this.state.columnName,
+    };
+    this.props.addNewColumn(column, workDetails);
     this.addColumn();
     this.setState({
       ...this.initialState,
