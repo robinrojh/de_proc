@@ -24,13 +24,43 @@ const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
   localStorage.authenticated = true;
   useEffect(() => {
+    // Access list subcollection within user collection
+    // Uses onSnapshot to detect any changes in notification in individual works
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
-      .get()
-      .then((listQuerySnapshot) => {
+      .onSnapshot((listQuerySnapshot) => {
         listQuerySnapshot.docs.forEach((listDoc) => {
+          if (new Date().getHours() <= listDoc.data().workStart && new Date().getMinutes() < 45) {
+            // Send notification 15 minutes before work hour begins
+            const notifTime = new Date();
+            notifTime.setHours(listDoc.data().workStart - 1)
+            notifTime.setMinutes(45);
+            new cron.CronJob(notifTime, () => {
+              new Notification(
+                {
+                  title: "Get ready for your work!",
+                  body: "Take a look at your to-do list first!"
+                }
+              );
+            }).start();
+          }
+          if (new Date().getHours() <= listDoc.data().workEnd && new Date().getMinutes() < 45) {
+            // Send notification 15 minutes before work hour ends
+            const notifTime = new Date();
+            notifTime.setHours(listDoc.data().workEnd - 1)
+            notifTime.setMinutes(45);
+            new cron.CronJob(notifTime, () => {
+              new Notification(
+                {
+                  title: "Are you done with your work?",
+                  body: "Take a look at your to-do list before you leave!"
+                }
+              );
+            }).start();
+          }
+          // Access column subcollection
           dbService
             .collection("users")
             .doc(authService.currentUser.email)
@@ -40,6 +70,7 @@ const AppRouter = ({ isLoggedIn }) => {
             .get()
             .then((columnQuerySnapshot) => {
               columnQuerySnapshot.docs.forEach((columnDoc) => {
+                // Access work collection
                 dbService
                   .collection("users")
                   .doc(authService.currentUser.email)
@@ -72,7 +103,7 @@ const AppRouter = ({ isLoggedIn }) => {
                           );
                           console.log(
                             "notification fired for the work: " +
-                              workDoc.data().description
+                            workDoc.data().description
                           );
                         }).start();
                       }

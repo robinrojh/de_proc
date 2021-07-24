@@ -20,7 +20,6 @@ import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import { dbService, authService } from "../functions/util/fbase";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
@@ -72,6 +71,11 @@ const styles = (theme) => ({
     position: "absolute",
   },
 });
+
+/**
+ * AddList is a component for adding a list into the database.
+ * It consists of a button and a modal.
+ */
 class AddList extends Component {
   initialState = {
     listName: "",
@@ -104,6 +108,7 @@ class AddList extends Component {
       owner: authService.currentUser.email,
       completed: false,
     };
+    // Adds the list to the database
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -115,6 +120,7 @@ class AddList extends Component {
         workStart: this.state.workStart,
         workEnd: this.state.workEnd,
       });
+    // adds the specified first column into the database
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -126,6 +132,7 @@ class AddList extends Component {
         owner: authService.currentUser.email,
         title: this.state.columnName,
       });
+      // Adds the first work in the list
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -158,10 +165,10 @@ class AddList extends Component {
     });
   };
   handleSubmit = () => {
-    const workDetails = {
-      description: this.state.description,
-      dueDate: this.state.dueDate.toISOString(),
-    };
+    // const workDetails = {
+    //   description: this.state.description,
+    //   dueDate: this.state.dueDate.toISOString(),
+    // };
     this.props.listAdd(this.state.listName);
     this.addList();
     this.setState({

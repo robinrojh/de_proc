@@ -21,15 +21,8 @@ import {
 import { dbService, authService } from "../functions/util/fbase";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-
-const cron = require("cron");
-
-// const styles = (theme) => ({
-//   ...theme,
-// });
 
 const styles = (theme) => ({
   palette: {
@@ -82,6 +75,10 @@ const styles = (theme) => ({
     marginTop: theme.spacing(2),
   },
 });
+
+/**
+ * AddWork component is in charge of adding a work to the database.
+ */
 class AddWork extends Component {
   state = {
     description: "",
@@ -91,6 +88,7 @@ class AddWork extends Component {
     workStart: 9,
     workEnd: 17
   };
+
   addWork = (event) => {
     // event.preventDefault();
     const newWork = {
@@ -100,6 +98,7 @@ class AddWork extends Component {
       completed: false,
       notification: this.state.notification
     };
+    // adds a new work to the works subcollection of the current user
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -142,15 +141,15 @@ class AddWork extends Component {
     console.log(this.props.column);
     this.props.add(this.props.columnName, newWork);
     this.handleClose();
-    const date = new Date(this.state.dueDate);
-    date.setMinutes(date.getMinutes() - this.state.notification);
-    if (date > new Date()) {
-      const job = new cron.CronJob(date, () => {
-        new Notification('notification for ' + this.state.description);
-        console.log('notification for ' + this.state.description + 'fired.')
-      })
-      job.start()
-    }
+    // const date = new Date(this.state.dueDate);
+    // date.setMinutes(date.getMinutes() - this.state.notification);
+    // if (date > new Date()) {
+    //   const job = new cron.CronJob(date, () => {
+    //     new Notification('notification for ' + this.state.description);
+    //     console.log('notification for ' + this.state.description + 'fired.')
+    //   })
+    //   job.start()
+    // }
   };
   handleDuedateChange = (event) => {
     this.setState({
@@ -173,6 +172,7 @@ class AddWork extends Component {
           maxWidth="sm"
         >
           <DialogTitle>Add a new work!</DialogTitle>
+          {/* Title of the work */}
           <DialogContent>
             <form>
               <TextField
@@ -188,6 +188,7 @@ class AddWork extends Component {
                 fullWidth
               />
             </form>
+            {/* Due date for the work */}
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Grid container justify="space-around">
                 <KeyboardDatePicker
@@ -215,6 +216,7 @@ class AddWork extends Component {
                 />
               </Grid>
             </MuiPickersUtilsProvider>
+            {/* Setting up notifications, including working hours */}
             <FormControl className={classes.formControl}>
               <InputLabel id="notification">Notification settings</InputLabel>
               <Select
