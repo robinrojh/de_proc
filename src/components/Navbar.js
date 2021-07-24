@@ -26,14 +26,14 @@ class Navbar extends Component {
   };
   componentDidMount() {
     this.setState({
-      authenticated: this.props.authenticated,
+      authenticated: authService.currentUser,
     });
   }
   render() {
     return (
       <AppBar>
         <Toolbar className="nav-container">
-          {this.state.authenticated ? (
+          {authService.currentUser ? (
             <Fragment>
               <Link to="/Dashboard">
                 <MyButton tip="List">

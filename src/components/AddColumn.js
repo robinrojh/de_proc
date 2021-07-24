@@ -9,7 +9,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import axios from "axios";
 import "date-fns";
 import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
@@ -22,7 +21,6 @@ import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import { authService, dbService } from "../functions/util/fbase";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
@@ -137,20 +135,6 @@ class AddWork extends Component {
           .doc(this.state.id)
           .collection("works")
           .add(newWork);
-      })
-      .then(() => {
-        const workDetails = {
-          description: this.state.description,
-          dueDate: this.state.dueDate.toISOString(),
-        };
-        const column = {
-          id: this.state.id,
-          title: this.state.columnName,
-        };
-        this.props.addNewColumn(column, workDetails);
-        this.setState({
-          ...this.initialState,
-        });
       });
   };
   handleOpen = () => {
@@ -178,7 +162,11 @@ class AddWork extends Component {
       id: this.state.id,
       title: this.state.columnName,
     };
+    this.props.addNewColumn(column, workDetails);
     this.addColumn();
+    this.setState({
+      ...this.initialState,
+    });
     this.handleClose();
   };
   handleDuedateChange = (event) => {

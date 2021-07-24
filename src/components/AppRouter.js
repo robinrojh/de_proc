@@ -1,6 +1,5 @@
 import {
   HashRouter as Router,
-  Redirect,
   Route,
   Switch,
 } from "react-router-dom";
