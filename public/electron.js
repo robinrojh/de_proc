@@ -23,7 +23,7 @@ function createWindow() {
       ? 'http://localhost:3000'
       : 'https://deproc-398f6.firebaseapp.com/#/'
   );
-  win.setMenu(null);
+  // win.setMenu(null);
   // Open the DevTools.
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
@@ -91,7 +91,7 @@ if (process.platform === 'darwin') {
 else {
   app.setLoginItemSettings({
     openAtLogin: true,
-    path: path.resolve(path.dirname(process.execPath), "..", "Update.exe"),
+    path: process.execPath,
     args: [
       "--processStart",
       `"${path.basename(process.execPath)}"`,
