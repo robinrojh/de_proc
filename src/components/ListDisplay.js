@@ -197,60 +197,67 @@ class ListDisplay extends Component {
     const { classes } = this.props;
     if (localStorage.authenticated) {
       let value = 0;
-      let listOfWork = this.state.columns ? (
-        this.state.columns.map((column) => {
-          console.log(this.state);
-          let workList = this.state[column] ? (
-            this.state[column].map((works) => {
-              return (
-                <Work
-                  work={works}
-                  key={works.workId}
-                  edit={this.editWork}
-                  delete={this.deleteWork}
-                  listName={this.state.listName}
-                  columnName={column}
-                />
-              );
-            })
-          ) : (
-            <p>Loading...</p>
-          );
-          value++;
-          console.log(column);
-          const columnName = this.state.rawColumns.filter(
-            (col) => col.id == column
-          )[0];
-          console.log(columnName);
-          console.log(this.state);
-
-          return (
-            <Fragment key={value}>
-              <Divider orientation="vertical" flexItem />
-
-              <Grid item xs>
-                <Typography variant="h6">
-                  <Box fontStyle="oblique" fontFamily="Monospace">
-                    {columnName.title}
-                  </Box>
-                </Typography>
-                <Paper className={classes.paper}>
-                  {workList}
-
-                  <AddWork
-                    add={this.addWork}
-                    columnName={column}
+      let listOfWork =
+        this.state.columns && this.state.columns.length ? (
+          this.state.columns.map((column) => {
+            console.log(this.state);
+            let workList = this.state[column] ? (
+              this.state[column].map((works) => {
+                return (
+                  <Work
+                    work={works}
+                    key={works.workId}
+                    edit={this.editWork}
+                    delete={this.deleteWork}
                     listName={this.state.listName}
+                    columnName={column}
                   />
-                </Paper>
-              </Grid>
-              <Divider orientation="vertical" flexItem />
-            </Fragment>
-          );
-        })
-      ) : (
-        <p>Loading...</p>
-      );
+                );
+              })
+            ) : (
+              <p>
+                You have no columns. Create one by pressing the icon on the top
+                left corner.
+              </p>
+            );
+            value++;
+            console.log(column);
+            const columnName = this.state.rawColumns.filter(
+              (col) => col.id == column
+            )[0];
+            console.log(columnName);
+            console.log(this.state);
+
+            return (
+              <Fragment key={value}>
+                <Divider orientation="vertical" flexItem />
+
+                <Grid item xs>
+                  <Typography variant="h6">
+                    <Box fontStyle="oblique" fontFamily="Monospace">
+                      {columnName.title}
+                    </Box>
+                  </Typography>
+                  <Paper className={classes.paper}>
+                    {workList}
+
+                    <AddWork
+                      add={this.addWork}
+                      columnName={column}
+                      listName={this.state.listName}
+                    />
+                  </Paper>
+                </Grid>
+                <Divider orientation="vertical" flexItem />
+              </Fragment>
+            );
+          })
+        ) : (
+          <p>
+            You have no columns. Create one by pressing the icon on the top left
+            corner.
+          </p>
+        );
       return (
         <div>
           <AddColumn

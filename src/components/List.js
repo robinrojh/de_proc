@@ -31,18 +31,18 @@ class List extends Component {
   state = {};
 
   render() {
-    const { listName, classes } = this.props;
+    const { list, classes } = this.props;
     return (
-      <Grid item xs={12} key={listName}>
+      <Grid item xs={12} key={list}>
         <Card className={classes.card}>
           <CardContent className={classes.content}>
             <MuiLink
               component={Link}
-              to={`/lists/${listName}`}
+              to={`/lists/${list.id}`}
               color="primary"
               variant="h5"
             >
-              {listName}
+              {list.title}
               <hr />
             </MuiLink>
           </CardContent>

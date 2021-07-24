@@ -60,10 +60,10 @@ class Navbar extends Component {
                 {" "}
                 Signup
               </Button>
-              <Button color="inherit" component={Link} to="/">
+              {/* <Button color="inherit" component={Link} to="/">
                 {" "}
                 Home
-              </Button>
+              </Button> */}
             </Fragment>
           )}
         </Toolbar>

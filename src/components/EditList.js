@@ -9,12 +9,14 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+
 import { dbService, authService } from "../functions/util/fbase";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Checkbox from "@material-ui/core/Checkbox";
-// import { auth } from "firebase-admin";
+import { auth } from "firebase-admin";
 
 const styles = (theme) => ({
   palette: {
@@ -34,6 +36,12 @@ const styles = (theme) => ({
   typography: {
     useNextVariants: true,
   },
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+      width: "40ch",
+    },
+  },
   form: {
     textAlign: "center",
   },
@@ -43,9 +51,9 @@ const styles = (theme) => ({
   pageTitle: {
     margin: "10px auto 10ps auto",
   },
-  textField: {
-    margin: "10px auto 10ps auto",
-  },
+  //   textField: {
+  //     margin: "10px auto 10ps auto",
+  //   },
   button: {
     marginTop: 20,
     position: "relative",
@@ -69,17 +77,18 @@ const styles = (theme) => ({
   },
 });
 
-class DeleteColumns extends Component {
+class EditList extends Component {
   state = {};
-  mapDetailsToState = (columns) => {
+  mapDetailsToState = (lists) => {
     this.setState({
-      columns: columns,
+      lists: lists,
     });
-    columns.forEach((column) => {
-      console.log(column.title);
+    lists.forEach((list) => {
       this.setState({
-        [column.id]: {
-          selected: false,
+        [list.id]: {
+          title: list.title,
+          id: list.id,
+          edited: false,
         },
       });
     });
@@ -87,82 +96,104 @@ class DeleteColumns extends Component {
   };
   handleOpen = () => {
     this.setState({ open: true });
-    this.mapDetailsToState(this.props.columns);
+    this.mapDetailsToState(this.props.lists);
   };
   handleClose = () => {
     this.setState({ open: false });
   };
   componentDidMount() {
-    this.props.columns.forEach((column) => {
+    this.props.lists.forEach((list) => {
       this.setState({
-        [column.id]: {
-          selected: false,
+        [list.id]: {
+          title: list.title,
+          id: list.id,
+          edited: false,
         },
       });
     });
   }
-  handleChange = (column) => {
-    this.state[column.id].selected
-      ? this.setState({ [column.id]: { selected: false } })
-      : this.setState({ [column.id]: { selected: true } });
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: {
+        title: event.target.value,
+        edited: true,
+        id: event.target.name,
+      },
+    });
   };
   handleSubmit = () => {
-    // this.state.columns.forEach((column) => {
-    //   console.log(column);
-    //   if (this.state[column].selected) {
+    // this.state.lists.forEach((list) => {
+    //   console.log(list);
+    //   if (this.state[list].selected) {
     //     dbService
     //       .collection("users")
     //       .doc(authService.currentUser.email)
-    //       .collection("columns")
-    //       .doc(column)
+    //       .collection("lists")
+    //       .doc(list)
     //       .delete();
-    //     this.props.delete(column);
+    //     this.props.delete(list);
     //   }
     // });
-    const filteredcolumn = this.state.columns.filter(
-      (column) => this.state[column.id].selected
+    const filteredlist = this.state.lists.filter(
+      (list) => this.state[list.id].edited
     );
-    filteredcolumn.forEach((column) => {
+    filteredlist.forEach((list) => {
+      console.log(list);
       dbService
         .collection("users")
         .doc(authService.currentUser.email)
         .collection("lists")
-        .doc(this.props.listName)
-        .collection("columns")
-        .doc(column.id)
-        .delete();
-      this.props.delete(column.id, column.title);
+        .doc(this.state[list.id].id)
+        .update({
+          owner: authService.currentUser.email,
+          title: this.state[list.id].title,
+        });
+      this.props.edit(this.state[list.id]);
     });
-    console.log(filteredcolumn);
+    console.log(filteredlist);
     this.handleClose();
   };
   render() {
     const { classes } = this.props;
-    const columnComponent =
-      this.state.columns && this.state.columns.length ? (
-        this.state.columns.map((column) => (
-          <Card>
-            <CardContent className={classes.content}>
-              <Typography color="primary" varian="h4" display="inline">
-                {column.title}
-              </Typography>
-              <Checkbox
-                checked={this.state[column.id].selected}
-                onChange={() => this.handleChange(column)}
-                inputProps={{ "aria-label": "primary checkbox" }}
-                color="primary"
-              />
-            </CardContent>
-          </Card>
+    console.log(this.state);
+    const listComponent =
+      this.state.lists && this.state.lists.length ? (
+        this.state.lists.map((list) => (
+          //   <Card>
+          //     <CardContent className={classes.content}>
+          //       <Typography color="primary" varian="h4" display="inline">
+          //         {list}
+          //       </Typography>
+          //       <Checkbox
+          //         checked={this.state[list].selected}
+          //         onChange={() => this.handleChange(list)}
+          //         inputProps={{ "aria-label": "primary checkbox" }}
+          //         color="primary"
+          //       />
+          //     </CardContent>
+          //   </Card>
+          <form className={classes.root}>
+            <TextField
+              id={"standard-basic"}
+              name={list.id}
+              type="text"
+              label={list.title}
+              placeholder="Work description"
+              className={classes.textfield}
+              value={this.state[list.id].title}
+              onChange={this.handleChange}
+              fullwidth
+            />
+          </form>
         ))
       ) : (
-        <p>Loading</p>
+        <p>Loading...</p>
       );
     return (
       <Fragment>
-        <Tooltip title="Delete columns" placement="top">
+        <Tooltip title="Edit lists" placement="top">
           <IconButton onClick={this.handleOpen} className={classes.button}>
-            <DeleteForeverIcon color="primary" />
+            <EditIcon color="primary" />
           </IconButton>
         </Tooltip>
         <Dialog
@@ -171,14 +202,14 @@ class DeleteColumns extends Component {
           fullWidth
           maxWidth="sm"
         >
-          <DialogTitle>Delete your column</DialogTitle>
-          <DialogContent>{columnComponent}</DialogContent>
+          <DialogTitle>Edit your list names</DialogTitle>
+          <DialogContent>{listComponent}</DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
             <Button onClick={this.handleSubmit} color="primary">
-              Delete
+              Edit
             </Button>
           </DialogActions>
         </Dialog>
@@ -187,4 +218,4 @@ class DeleteColumns extends Component {
   }
 }
 
-export default withStyles(styles)(DeleteColumns);
+export default withStyles(styles)(EditList);

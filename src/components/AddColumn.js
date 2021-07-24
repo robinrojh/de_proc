@@ -133,6 +133,20 @@ class AddWork extends Component {
           .doc(this.state.id)
           .collection("works")
           .add(newWork);
+      })
+      .then(() => {
+        const workDetails = {
+          description: this.state.description,
+          dueDate: this.state.dueDate.toISOString(),
+        };
+        const column = {
+          id: this.state.id,
+          title: this.state.columnName,
+        };
+        this.props.addNewColumn(column, workDetails);
+        this.setState({
+          ...this.initialState,
+        });
       });
   };
   handleOpen = () => {
@@ -160,11 +174,7 @@ class AddWork extends Component {
       id: this.state.id,
       title: this.state.columnName,
     };
-    this.props.addNewColumn(column, workDetails);
     this.addColumn();
-    this.setState({
-      ...this.initialState,
-    });
     this.handleClose();
   };
   handleDuedateChange = (event) => {

@@ -13,6 +13,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import List from "../components/List";
 import DeleteList from "../components/DeleteList";
+import EditList from "../components/EditList";
 
 const cron = require("cron");
 
@@ -40,9 +41,9 @@ class Dashboard extends Component {
     errors: {},
   };
 
-  listAdd = (listName) => {
+  listAdd = (list) => {
     const newLists = this.state.listArray;
-    newLists.push(listName);
+    newLists.push(list);
     this.setState({
       listArray: newLists,
     });
@@ -61,7 +62,11 @@ class Dashboard extends Component {
         const lists = [];
         element.docs.forEach((list) => {
           console.log(list.data().title);
-          lists.push(list.data().title);
+          //   lists.push(list.data().title);
+          lists.push({
+            id: list.id,
+            title: list.data().title,
+          });
         });
         // const componentList = lists.map((element) => {
         //   return (
@@ -161,17 +166,36 @@ class Dashboard extends Component {
       listArray: newList,
     });
   };
+  editList = (listName) => {
+    let newList = this.state.listArray;
+    newList.map((list) => {
+      if (list.id == listName.id) {
+        list.title = listName.title;
+      }
+    });
+    this.setState({
+      listArray: newList,
+    });
+  };
 
   render = () => {
     console.log(this.state.listArray);
     const { classes } = this.props;
-    const componentList = this.state.listArray.map((listName) => (
-      <List listName={listName} />
-    ));
+    console.log(this.state.listArray);
+    const componentList =
+      this.state.listArray && this.state.listArray.length ? (
+        this.state.listArray.map((listName) => <List list={listName} />)
+      ) : (
+        <p>
+          You have no lists. Create one by pressing the icon on the top left
+          corner.
+        </p>
+      );
     return (
       <div>
         <AddList listAdd={this.listAdd} />
         <DeleteList lists={this.state.listArray} delete={this.deleteList} />
+        <EditList lists={this.state.listArray} edit={this.editList} />
         <Grid container spacing={3} className={classes.root}>
           {componentList}
         </Grid>

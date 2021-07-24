@@ -81,7 +81,7 @@ class AddList extends Component {
     open: false,
     notification: 5,
     workStart: 9,
-    workEnd: 5
+    workEnd: 5,
   };
   state = {
     listName: "",
@@ -91,7 +91,7 @@ class AddList extends Component {
     open: false,
     notification: 5,
     workStart: 9,
-    workEnd: 5
+    workEnd: 5,
   };
   addList = (event) => {
     console.log("adding");
@@ -113,7 +113,7 @@ class AddList extends Component {
         owner: authService.currentUser.email,
         title: this.state.listName,
         workStart: this.state.workStart,
-        workEnd: this.state.workEnd
+        workEnd: this.state.workEnd,
       });
     dbService
       .collection("users")
@@ -270,7 +270,7 @@ class AddList extends Component {
               </Select>
             </FormControl>
             <FormControl className={classes.formControl}>
-              <InputLabel id="workhour">Work hours\</InputLabel>
+              <InputLabel id="workhour">Work hours</InputLabel>
               <Select
                 labelId="workStart"
                 id="workStart"

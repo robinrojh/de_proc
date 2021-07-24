@@ -51,7 +51,6 @@ class SignIn extends React.Component {
     };
   }
 
-
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
@@ -66,12 +65,12 @@ class SignIn extends React.Component {
       loading: true,
     });
     try {
-      await authService.signInWithEmailAndPassword(this.state.email, this.state.password);
-      this.props.history.push()
-    }
-    catch (error) {
-
-    }
+      await authService.signInWithEmailAndPassword(
+        this.state.email,
+        this.state.password
+      );
+      this.props.history.push("/Dashboard");
+    } catch (error) {}
   };
 
   render() {
@@ -116,7 +115,7 @@ class SignIn extends React.Component {
               </Typography>
             )}
             <Button
-              type="dubmit"
+              type="submit"
               variant="contained"
               color="primary"
               className={classes.button}
