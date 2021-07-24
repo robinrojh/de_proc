@@ -219,7 +219,7 @@ class ListDisplay extends Component {
           value++;
           console.log(column);
           const columnName = this.state.rawColumns.filter(
-            (col) => col.id == column
+            (col) => col.id === column
           )[0];
           console.log(columnName);
           console.log(this.state);
