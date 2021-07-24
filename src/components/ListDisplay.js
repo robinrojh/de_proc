@@ -197,7 +197,6 @@ class ListDisplay extends Component {
     const { classes } = this.props;
     if (localStorage.authenticated) {
       let value = 0;
-<<<<<<< HEAD
       let listOfWork =
         this.state.columns && this.state.columns.length ? (
           this.state.columns.map((column) => {
@@ -228,34 +227,6 @@ class ListDisplay extends Component {
             )[0];
             console.log(columnName);
             console.log(this.state);
-=======
-      let listOfWork = this.state.columns ? (
-        this.state.columns.map((column) => {
-          console.log(this.state);
-          let workList = this.state[column] ? (
-            this.state[column].map((works) => {
-              return (
-                <Work
-                  work={works}
-                  key={works.workId}
-                  edit={this.editWork}
-                  delete={this.deleteWork}
-                  listName={this.state.listName}
-                  columnName={column}
-                />
-              );
-            })
-          ) : (
-            <p>Loading...</p>
-          );
-          value++;
-          console.log(column);
-          const columnName = this.state.rawColumns.filter(
-            (col) => col.id === column
-          )[0];
-          console.log(columnName);
-          console.log(this.state);
->>>>>>> 0343382b845e80d5a888e6807aace0d3db0ddcfe
 
             return (
               <Fragment key={value}>
