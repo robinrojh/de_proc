@@ -23,22 +23,27 @@ function createWindow() {
       ? 'http://localhost:3000'
       : 'https://deproc-398f6.firebaseapp.com/#/'
   );
-  // win.setMenu(null);
+  win.setMenu(null);
   // Open the DevTools.
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
 
-  win.on('close', (event) => {
-    event.preventDefault();
-    win.hide()
-  })
+  if (!isQuiting) {
+    win.on('close', (event) => {
+      event.preventDefault();
+      win.hide()
+    })
+  }
 
   // Sets up the system tray for windows computers
   // Mac version application does not require a system tray
   // as they have the dock.
   let tray = new Tray(__dirname + '/favicon.ico');
   tray.setTitle('DeProc')
+  tray.on('double-click', () => {
+    win.show();
+  })
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Show App', click: () => {
@@ -49,12 +54,12 @@ function createWindow() {
       label: 'Quit', click: () => {
         isQuiting = true;
         app.quit();
+        win.destroy();
+        return null;
       }
     }
   ]);
-  tray.on('double-click', () => {
-    win.show();
-  })
+
   tray.setContextMenu(contextMenu);
   tray.setToolTip("To-do List");
   tray.displayBalloon({
@@ -86,6 +91,12 @@ if (process.platform === 'darwin') {
 else {
   app.setLoginItemSettings({
     openAtLogin: true,
-    path: process.execPath
+    path: path.resolve(path.dirname(process.execPath), "..", "Update.exe"),
+    args: [
+      "--processStart",
+      `"${path.basename(process.execPath)}"`,
+      "--process-start-args",
+      `"--hidden"`
+    ]
   })
 }
