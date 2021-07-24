@@ -24,6 +24,8 @@ const AppRouter = ({ isLoggedIn }) => {
   // Provides a basic router for all the paths in the website.
   localStorage.authenticated = true;
   useEffect(() => {
+    // Access list subcollection within user collection
+    // Uses onSnapshot to detect any changes in notification in individual works
     dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -58,6 +60,7 @@ const AppRouter = ({ isLoggedIn }) => {
               );
             }).start();
           }
+          // Access column subcollection
           dbService
             .collection("users")
             .doc(authService.currentUser.email)
@@ -67,6 +70,7 @@ const AppRouter = ({ isLoggedIn }) => {
             .get()
             .then((columnQuerySnapshot) => {
               columnQuerySnapshot.docs.forEach((columnDoc) => {
+                // Access work collection
                 dbService
                   .collection("users")
                   .doc(authService.currentUser.email)

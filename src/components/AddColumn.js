@@ -74,6 +74,10 @@ const styles = (theme) => ({
     position: "absolute",
   },
 });
+
+/**
+ * AddWork component is a button and modal for adding a work.
+ */
 class AddWork extends Component {
   initialState = {
     columnName: "",
