@@ -123,14 +123,24 @@ class DeleteColumns extends Component {
       (column) => this.state[column.id].selected
     );
     filteredcolumn.forEach((column) => {
-      dbService
-        .collection("users")
-        .doc(authService.currentUser.email)
-        .collection("lists")
-        .doc(this.props.listName)
-        .collection("columns")
-        .doc(column.id)
-        .delete();
+      const columnRef =
+        dbService
+          .collection("users")
+          .doc(authService.currentUser.email)
+          .collection("lists")
+          .doc(this.props.listName)
+          .collection("columns")
+          .doc(column.id);
+
+      columnRef
+        .collection("works")
+        .get()
+        .then((workSnapshot) => {
+          workSnapshot.docs.forEach((work) => {
+            columnRef.collection("works").doc(work.id).delete();
+          })
+        })
+      columnRef.delete();
       this.props.delete(column.id, column.title);
     });
     console.log(filteredcolumn);

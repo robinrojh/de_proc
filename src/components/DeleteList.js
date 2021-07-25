@@ -295,29 +295,29 @@ class DeleteList extends Component {
       : this.setState({ [list.id]: { selected: true } });
   };
   handleSubmit = () => {
-    // this.state.lists.forEach((list) => {
-    //   console.log(list);
-    //   if (this.state[list].selected) {
-    //     dbService
-    //       .collection("users")
-    //       .doc(authService.currentUser.email)
-    //       .collection("lists")
-    //       .doc(list)
-    //       .delete();
-    //     this.props.delete(list);
-    //   }
-    // });
     const filteredlist = this.state.lists.filter(
       (list) => this.state[list.id].selected
     );
-    filteredlist.forEach((list) => {
-      dbService
-        .collection("users")
-        .doc(authService.currentUser.email)
-        .collection("lists")
-        .doc(list.id)
-        .delete();
-      //   this.props.delete(list.id, list.title);
+    filteredlist.forEach(async (list) => {
+      const listRef = dbService.collection("users").doc(authService.currentUser.email).collection("lists").doc(list.id);
+      await listRef
+        .collection("columns")
+        .get()
+        .then((columnSnapshot) => {
+          columnSnapshot.docs.forEach((column) => {
+            const columnRef = listRef.collection("columns").doc(column.data().title);
+            columnRef
+              .collection("works")
+              .get()
+              .then((workSnapshot) => {
+                workSnapshot.docs.forEach((work) => {
+                  columnRef.collection("works").doc(work.id).delete();
+                })
+              })
+            columnRef.delete();
+          })
+        })
+      await listRef.delete();
       this.props.delete(list);
     });
     console.log(filteredlist);
