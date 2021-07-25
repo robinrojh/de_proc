@@ -122,7 +122,7 @@ class DeleteColumns extends Component {
     const filteredcolumn = this.state.columns.filter(
       (column) => this.state[column.id].selected
     );
-    filteredcolumn.forEach((column) => {
+    filteredcolumn.forEach(async (column) => {
       const columnRef =
         dbService
           .collection("users")
@@ -132,7 +132,7 @@ class DeleteColumns extends Component {
           .collection("columns")
           .doc(column.id);
 
-      columnRef
+      await columnRef
         .collection("works")
         .get()
         .then((workSnapshot) => {
@@ -140,7 +140,7 @@ class DeleteColumns extends Component {
             columnRef.collection("works").doc(work.id).delete();
           })
         })
-      columnRef.delete();
+      await columnRef.delete();
       this.props.delete(column.id, column.title);
     });
     console.log(filteredcolumn);
