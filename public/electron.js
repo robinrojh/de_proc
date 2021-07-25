@@ -29,8 +29,21 @@ function createWindow() {
     win.webContents.openDevTools({ mode: 'detach' });
   }
 
+  if (!isQuiting) {
+    win.on('close', (event) => {
+      event.preventDefault();
+      win.hide()
+    })
+  }
+
+  // Sets up the system tray for windows computers
+  // Mac version application does not require a system tray
+  // as they have the dock.
   let tray = new Tray(__dirname + '/favicon.ico');
   tray.setTitle('DeProc')
+  tray.on('double-click', () => {
+    win.show();
+  })
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Show App', click: () => {
@@ -41,15 +54,19 @@ function createWindow() {
       label: 'Quit', click: () => {
         isQuiting = true;
         app.quit();
+        win.destroy();
+        return null;
       }
     }
   ]);
+
   tray.setContextMenu(contextMenu);
   tray.setToolTip("To-do List");
   tray.displayBalloon({
     title: 'DeProc To-do List',
     content: 'Take a look at what you got today!'
   });
+  win.tray = tray
 }
 
 // This method will be called when Electron has finished
@@ -57,22 +74,29 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(createWindow);
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
 });
 
-app.setLoginItemSettings({
-  openAtLogin: true,
-  path: process.execPath
-})
+// Sets auto starting feature
+if (process.platform === 'darwin') {
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    openAsHidden: true,
+    path: process.execPath
+  })
+}
+else {
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    path: process.execPath,
+    args: [
+      "--processStart",
+      `"${path.basename(process.execPath)}"`,
+      "--process-start-args",
+      `"--hidden"`
+    ]
+  })
+}
