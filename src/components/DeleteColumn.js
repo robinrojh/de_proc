@@ -151,6 +151,7 @@ class DeleteColumns extends Component {
     const columnComponent =
       this.state.columns && this.state.columns.length ? (
         this.state.columns.map((column) => (
+           this.state[column.id] ?
           <Card>
             <CardContent className={classes.content}>
               <Typography color="primary" varian="h4" display="inline">
@@ -164,6 +165,8 @@ class DeleteColumns extends Component {
               />
             </CardContent>
           </Card>
+          :
+          <p>Loading</p>
         ))
       ) : (
         <p>Loading</p>

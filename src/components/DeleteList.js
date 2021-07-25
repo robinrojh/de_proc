@@ -305,7 +305,7 @@ class DeleteList extends Component {
         .get()
         .then((columnSnapshot) => {
           columnSnapshot.docs.forEach((column) => {
-            const columnRef = listRef.collection("columns").doc(column.data().title);
+            const columnRef = listRef.collection("columns").doc(column.id);
             columnRef
               .collection("works")
               .get()

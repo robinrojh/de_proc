@@ -235,7 +235,7 @@ class ListDisplay extends Component {
                 <Grid item xs>
                   <Typography variant="h6">
                     <Box fontStyle="oblique" fontFamily="Monospace">
-                      {columnName.title}
+                      {columnName.listName}
                     </Box>
                   </Typography>
                   <Paper className={classes.paper}>
