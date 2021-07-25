@@ -52,34 +52,44 @@ class SignUp extends React.Component {
       errors: {},
     };
   }
+
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
-  handleSubmit = async (event) => {
-    event.preventDefault();
+
+  /**
+   * Creates a new user in the backend database with
+   * email and passwork provided by the user.
+   */
+  handleSubmit = async () => {
     this.setState({
       loading: true,
     });
     try {
-      await authService.createUserWithEmailAndPassword(this.state.email, this.state.password);
+      await authService.createUserWithEmailAndPassword(
+        this.state.email,
+        this.state.password
+      );
       const userObj = {
         email: this.state.email,
-        nickname: this.state.nickname
-      }
-      await dbService.collection('users').doc(this.state.email).set(userObj);
-    }
-    catch (error) {
-
-    }
+        nickname: this.state.nickname,
+      };
+      await dbService.collection("users").doc(this.state.email).set(userObj);
+    } catch (error) {}
   };
 
-  setAuthorizationHeader = (token) => {
-    const FBIdToken = `Bearer ${token}`;
-    localStorage.setItem("FBIdToken", FBIdToken);
-    axios.defaults.headers.common["Authorization"] = FBIdToken;
-  };
+  //   setAuthorizationHeader = (token) => {
+  //     const FBIdToken = `Bearer ${token}`;
+  //     localStorage.setItem("FBIdToken", FBIdToken);
+  //     axios.defaults.headers.common["Authorization"] = FBIdToken;
+  //   };
 
   render = () => {
     const { classes, loading } = this.props;

@@ -1,10 +1,5 @@
-import {
-  HashRouter as Router,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "../routes/Home";
-import About from "../routes/About";
 import SignIn from "../routes/SignIn";
 import SignUp from "../routes/SignUp";
 import Dashboard from "../routes/Dashboard";
@@ -32,32 +27,34 @@ const AppRouter = ({ isLoggedIn }) => {
         .collection("lists")
         .onSnapshot((listQuerySnapshot) => {
           listQuerySnapshot.docs.forEach((listDoc) => {
-            if (new Date().getHours() <= listDoc.data().workStart && new Date().getMinutes() < 45) {
+            if (
+              new Date().getHours() <= listDoc.data().workStart &&
+              new Date().getMinutes() < 45
+            ) {
               // Send notification 15 minutes before work hour begins
               const notifTime = new Date();
-              notifTime.setHours(listDoc.data().workStart - 1)
+              notifTime.setHours(listDoc.data().workStart - 1);
               notifTime.setMinutes(45);
               new cron.CronJob(notifTime, () => {
-                new Notification(
-                  {
-                    title: "Get ready for your work!",
-                    body: "Take a look at your to-do list first!"
-                  }
-                );
+                new Notification({
+                  title: "Get ready for your work!",
+                  body: "Take a look at your to-do list first!",
+                });
               }).start();
             }
-            if (new Date().getHours() <= listDoc.data().workEnd && new Date().getMinutes() < 45) {
+            if (
+              new Date().getHours() <= listDoc.data().workEnd &&
+              new Date().getMinutes() < 45
+            ) {
               // Send notification 15 minutes before work hour ends
               const notifTime = new Date();
-              notifTime.setHours(listDoc.data().workEnd - 1)
+              notifTime.setHours(listDoc.data().workEnd - 1);
               notifTime.setMinutes(45);
               new cron.CronJob(notifTime, () => {
-                new Notification(
-                  {
-                    title: "Are you done with your work?",
-                    body: "Take a look at your to-do list before you leave!"
-                  }
-                );
+                new Notification({
+                  title: "Are you done with your work?",
+                  body: "Take a look at your to-do list before you leave!",
+                });
               }).start();
             }
             // Access column subcollection
@@ -91,7 +88,8 @@ const AppRouter = ({ isLoggedIn }) => {
                           new cron.CronJob(dueDate, () => {
                             const notification = {
                               content:
-                                "Notification for " + workDoc.data().description,
+                                "Notification for " +
+                                workDoc.data().description,
                             };
                             dbService
                               .collection("users")
@@ -103,7 +101,7 @@ const AppRouter = ({ isLoggedIn }) => {
                             );
                             console.log(
                               "notification fired for the work: " +
-                              workDoc.data().description
+                                workDoc.data().description
                             );
                           }).start();
                         }
@@ -125,7 +123,6 @@ const AppRouter = ({ isLoggedIn }) => {
             <Switch>
               {isLoggedIn ? (
                 <>
-                  <Route exact path="/about" component={About} />
                   <Route exact path="/dashboard" component={Dashboard} />
                   <Route
                     exact
@@ -138,7 +135,6 @@ const AppRouter = ({ isLoggedIn }) => {
               ) : (
                 <>
                   <Route exact path="/" component={SignIn} />
-                  <Route exact path="/about" component={About} />
                   <Route exact path="/signin" component={SignIn} />
                   <Route exact path="/signup" component={SignUp} />
                   <Route

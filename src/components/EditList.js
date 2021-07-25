@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Typography, Button } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -10,12 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-
 import { dbService, authService } from "../functions/util/fbase";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import Checkbox from "@material-ui/core/Checkbox";
 
 const styles = (theme) => ({
   palette: {
@@ -44,27 +38,10 @@ const styles = (theme) => ({
   form: {
     textAlign: "center",
   },
-  image: {
-    margin: "20px auto 20ps auto",
-  },
-  pageTitle: {
-    margin: "10px auto 10ps auto",
-  },
-  //   textField: {
-  //     margin: "10px auto 10ps auto",
-  //   },
   button: {
     marginTop: 20,
     position: "relative",
     float: "right",
-  },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: "20px",
-  },
-  progress: {
-    position: "absolute",
   },
   card: {
     display: "flex",
@@ -78,6 +55,11 @@ const styles = (theme) => ({
 
 class EditList extends Component {
   state = {};
+
+  /**
+   * @param {columns} columns Takes in a list of columns from it's parent state
+   * With the given parameter, sets the state accordingly in order for deletion process.
+   */
   mapDetailsToState = (lists) => {
     this.setState({
       lists: lists,
@@ -93,13 +75,28 @@ class EditList extends Component {
     });
     console.log(this.state);
   };
+
+  /**
+   * Sets the dialog state to open when the appropriate icon is
+   * pressed in the ui, and shows the corresponding dialog
+   */
   handleOpen = () => {
     this.setState({ open: true });
     this.mapDetailsToState(this.props.lists);
   };
+
+  /**
+   * Sets the dialog state to close when the appropriate icon is
+   * pressed in the ui, and closes the corresponding dialog
+   */
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  /**
+   * When the component mounts during its lifecycle, sets the state
+   * accordingly for deletion process.
+   */
   componentDidMount() {
     this.props.lists.forEach((list) => {
       this.setState({
@@ -111,6 +108,12 @@ class EditList extends Component {
       });
     });
   }
+
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: {
@@ -120,19 +123,14 @@ class EditList extends Component {
       },
     });
   };
+
+  /**
+   * Takes care of submitting the form. Only selected lists for editing are
+   * filtered and request is sent to the backend database for editing.
+   * this.props.edit() function is called to reflect immediate change
+   * by making suitable changes in the parent state.
+   */
   handleSubmit = () => {
-    // this.state.lists.forEach((list) => {
-    //   console.log(list);
-    //   if (this.state[list].selected) {
-    //     dbService
-    //       .collection("users")
-    //       .doc(authService.currentUser.email)
-    //       .collection("lists")
-    //       .doc(list)
-    //       .delete();
-    //     this.props.delete(list);
-    //   }
-    // });
     const filteredlist = this.state.lists.filter(
       (list) => this.state[list.id].edited
     );
@@ -158,19 +156,6 @@ class EditList extends Component {
     const listComponent =
       this.state.lists && this.state.lists.length ? (
         this.state.lists.map((list) => (
-          //   <Card>
-          //     <CardContent className={classes.content}>
-          //       <Typography color="primary" varian="h4" display="inline">
-          //         {list}
-          //       </Typography>
-          //       <Checkbox
-          //         checked={this.state[list].selected}
-          //         onChange={() => this.handleChange(list)}
-          //         inputProps={{ "aria-label": "primary checkbox" }}
-          //         color="primary"
-          //       />
-          //     </CardContent>
-          //   </Card>
           <form className={classes.root}>
             <TextField
               id={"standard-basic"}
@@ -186,7 +171,7 @@ class EditList extends Component {
           </form>
         ))
       ) : (
-        <p>Loading...</p>
+        <p>You have no lists to edit.</p>
       );
     return (
       <Fragment>

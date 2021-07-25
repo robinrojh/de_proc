@@ -19,6 +19,10 @@ const styles = (theme) => ({
     },
   },
 });
+
+/**
+ * Component responsible for the ui of notifications.
+ */
 class NotificationDisplay extends Component {
   state = {};
   render() {

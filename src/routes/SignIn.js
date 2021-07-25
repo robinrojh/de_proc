@@ -51,13 +51,21 @@ class SignIn extends React.Component {
     };
   }
 
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
-  handleSubmit = async (event) => {
-    event.preventDefault();
+
+  /**
+   * Authorize/login a user if the user is registered in the database.
+   */
+  handleSubmit = async () => {
     this.setState({
       loading: true,
     });

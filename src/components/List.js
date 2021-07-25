@@ -27,6 +27,11 @@ const styles = (theme) => ({
     },
   },
 });
+
+/**
+ * Component for list ui. Mangages how a list would look like
+ * from the user side.
+ */
 class List extends Component {
   state = {};
 

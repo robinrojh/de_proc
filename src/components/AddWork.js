@@ -45,12 +45,6 @@ const styles = (theme) => ({
   form: {
     textAlign: "center",
   },
-  image: {
-    margin: "20px auto 20ps auto",
-  },
-  pageTitle: {
-    margin: "10px auto 10ps auto",
-  },
   textField: {
     margin: "10px auto 10ps auto",
   },
@@ -59,20 +53,9 @@ const styles = (theme) => ({
     position: "relative",
     float: "left",
   },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: "20px",
-  },
-  progress: {
-    position: "absolute",
-  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
   },
 });
 
@@ -86,17 +69,19 @@ class AddWork extends Component {
     open: false,
     notification: 5,
     workStart: 9,
-    workEnd: 17
+    workEnd: 17,
   };
 
+  /**
+   * Takes care of adding the given work to the backend database
+   */
   addWork = (event) => {
-    // event.preventDefault();
     const newWork = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
       owner: authService.currentUser.email,
       completed: false,
-      notification: this.state.notification
+      notification: this.state.notification,
     };
     // adds a new work to the works subcollection of the current user
     dbService
@@ -112,27 +97,54 @@ class AddWork extends Component {
         console.error(err);
       });
   };
+
+  /**
+   * Sets the dialog state to open when the appropriate icon is
+   * pressed in the ui, and shows the corresponding dialog
+   */
   handleOpen = () => {
     this.setState({ open: true });
   };
+
+  /**
+   * Sets the dialog state to close when the appropriate icon is
+   * pressed in the ui, and closes the corresponding dialog
+   */
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
+
+  /**
+   * @param {event} event Data returned from the notification form
+   *
+   * Data returned from the notification form is different from other data,
+   * so it had to be handled separately. It sets
+   * the notification state to the user's choice in the ui.
+   */
   handleNotificationChange = (event) => {
     this.setState({
       notification: event.target.value,
     });
   };
+
+  /**
+   * Takes care of submitting the form. It calls the addWork() function
+   * which adds data in the backend database, and also add() function
+   * which sets the new data in it's parent component's state in order to reflect
+   * the change immediately.
+   */
   handleSubmit = () => {
-    // const workDetails = {
-    //   description: this.state.description,
-    //   dueDate: this.state.dueDate.toISOString()
-    // };
     const newWork = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
@@ -141,16 +153,15 @@ class AddWork extends Component {
     console.log(this.props.column);
     this.props.add(this.props.columnName, newWork);
     this.handleClose();
-    // const date = new Date(this.state.dueDate);
-    // date.setMinutes(date.getMinutes() - this.state.notification);
-    // if (date > new Date()) {
-    //   const job = new cron.CronJob(date, () => {
-    //     new Notification('notification for ' + this.state.description);
-    //     console.log('notification for ' + this.state.description + 'fired.')
-    //   })
-    //   job.start()
-    // }
   };
+
+  /**
+   * @param {event} event Data returned from picking due date with date picker.
+   *
+   * Data returned for due date change is different from other data like filling up a
+   * form, etc, and hence has to be handled separately in order to correctly set the state
+   * accoring to user input.
+   */
   handleDuedateChange = (event) => {
     this.setState({
       dueDate: event,

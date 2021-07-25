@@ -11,7 +11,6 @@ import Divider from "@material-ui/core/Divider";
 import AddColumn from "../components/AddColumn";
 import Box from "@material-ui/core/Box";
 import DeleteColumn from "./DeleteColumn";
-import { Delete } from "@material-ui/icons";
 import EditColumn from "./EditColumn";
 
 const cron = require("cron");
@@ -39,6 +38,13 @@ class ListDisplay extends Component {
     rawColumns: [],
   };
 
+  /**
+   * @param {column} column Column in which the new work will be added.
+   * @param {newWork} newWork New work to be added in the column.
+   *
+   * Adds the new work in the given column and updated the state
+   * accorgingly in order to reflect immediate change in the ui.
+   */
   addNewColumn = (column, newWork) => {
     let newColumns = this.state.columns;
     let newRawColumns = this.state.rawColumns;
@@ -53,12 +59,18 @@ class ListDisplay extends Component {
     });
   };
 
+  /**
+   *
+   * @param {columnId} columnId Id for the column in the backend.
+   * @param {columnName} columnName new title for the column.
+   *
+   * Column title with the corresponding columnId will be changed to
+   * columnName, which is the new title provided by the user.
+   */
   editColumn = (columnId, columnName) => {
-    let prevTitle = "";
     let newRawColumn = this.state.rawColumns;
     newRawColumn.map((col) => {
       if (col.id == columnId) {
-        prevTitle = col.title;
         col.title = columnName;
       }
     });
@@ -67,6 +79,18 @@ class ListDisplay extends Component {
       rawColumns: newRawColumn,
     });
   };
+
+  /**
+   * @param {newDescription} newDescription new description to be edited.
+   * @param {newDueDate} newDueDate new due date to be edited
+   * @param {newNotification} newNotification new notification setting to be edited
+   * @param {oldWork} oldWork oldWork is required so that it can be identified from the state.
+   * @param {column} column column in which the editing work is in.
+   *
+   * The work to be edited is identified using the oldWork, and its description, duedate and
+   * notification setting is edited and the whole column with the edited work is set again
+   * in the state.
+   */
   editWork = (newDescription, newDueDate, newNotification, oldWork, column) => {
     console.log(column);
     let newColumn = this.state[column];
@@ -80,6 +104,13 @@ class ListDisplay extends Component {
     });
   };
 
+  /**
+   * @param {column} column column in which the work to be deleted is in
+   * @param {work} work work which will be deleted
+   *
+   * work to be deleted is identified from the column, it is deleted and
+   * the new column without the deleted work is set again in the state.
+   */
   deleteWork = (column, work) => {
     let newColumn = this.state[column];
     let ind = this.state[column].indexOf(work);
@@ -89,6 +120,14 @@ class ListDisplay extends Component {
     });
   };
 
+  /**
+   *
+   * @param {column} column column in which the work to be added is in
+   * @param {newWork} newWork new work to be added in the column
+   *
+   * new work is added to the column, and the column with the new work is
+   * set again in the state.
+   */
   addWork = (column, newWork) => {
     let newColumn = this.state[column];
     newColumn.push(newWork);
@@ -97,16 +136,18 @@ class ListDisplay extends Component {
     });
   };
 
+  /**
+   * @param {columnId} columnId Id for the column to be deleted
+   * @param {columnName} columnName Name of the column to be deleted.
+   *
+   * the given column is deleted from both raw column and columns, and
+   * the list of work in the column is set to empty, to remove any work inside.
+   */
   deleteColumn = (columnId, columnName) => {
     let modifiedRawColumn = this.state.rawColumns;
     let newRawColumn = this.state.rawColumns.filter(
       (col) => col.id == columnId
     );
-    // newRawColumn.map((col) => {
-    //   if (col.id == columnId) {
-    //     col.title = columnName;
-    //   }
-    // });
     let index = this.state.rawColumns.indexOf(newRawColumn[0]);
     modifiedRawColumn.splice(index, 1);
     let modifiedColumns = this.state.columns;
@@ -119,6 +160,11 @@ class ListDisplay extends Component {
     });
     console.log(modifiedRawColumn);
   };
+
+  /**
+   * Fetches all the columns and works present in the backend and
+   * sets state accordingly in order to display data on the ui.
+   */
   async fetchColumnsAndWorks() {
     const title = this.props.match.params.listTitle;
     this.setState({
@@ -134,7 +180,6 @@ class ListDisplay extends Component {
       .get()
       .then((data) => {
         data.forEach((doc) => {
-          //   this.state.columns.push(doc.data().title);
           this.state.columns.push(doc.id);
           this.state.rawColumns.push({ id: doc.id, title: doc.data().title });
         });
@@ -190,6 +235,10 @@ class ListDisplay extends Component {
       });
   }
 
+  /**
+   * When the component mounts during its lifecycle, calls
+   * fetchColumnsAndWorks() to set data accordingly.
+   */
   async componentDidMount() {
     await this.fetchColumnsAndWorks();
   }

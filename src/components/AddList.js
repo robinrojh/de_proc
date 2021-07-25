@@ -23,10 +23,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
-// const styles = (theme) => ({
-//   ...theme,
-// });
-
 const styles = (theme) => ({
   palette: {
     primary: {
@@ -48,12 +44,6 @@ const styles = (theme) => ({
   form: {
     textAlign: "center",
   },
-  image: {
-    margin: "20px auto 20ps auto",
-  },
-  pageTitle: {
-    margin: "10px auto 10ps auto",
-  },
   textField: {
     margin: "10px auto 10ps auto",
   },
@@ -61,14 +51,6 @@ const styles = (theme) => ({
     // marginTop: 0,
     position: "relative",
     float: "left",
-  },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: "20px",
-  },
-  progress: {
-    position: "absolute",
   },
 });
 
@@ -97,11 +79,15 @@ class AddList extends Component {
     workStart: 9,
     workEnd: 5,
   };
+
+  /**
+   * Takes care of adding the given list to the backend database
+   * along with the first column and work provided by the user.
+   */
   addList = (event) => {
     console.log("adding");
     console.log(this.state.listName);
     console.log(this.state.columnName);
-    // event.preventDefault();
     const newWork = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
@@ -113,69 +99,105 @@ class AddList extends Component {
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
-      .doc(this.state.listName)
-      .set({
+      .add({
         owner: authService.currentUser.email,
         title: this.state.listName,
         workStart: this.state.workStart,
         workEnd: this.state.workEnd,
+      })
+      .then((doc) => {
+        this.setState({
+          listId: doc.id,
+        });
+        console.log(this.state);
+        dbService
+          .collection("users")
+          .doc(authService.currentUser.email)
+          .collection("lists")
+          .doc(doc.id)
+          .collection("columns")
+          .add({
+            owner: authService.currentUser.email,
+            title: this.state.columnName,
+          })
+          .then((column) => {
+            dbService
+              .collection("users")
+              .doc(authService.currentUser.email)
+              .collection("lists")
+              .doc(this.state.listId)
+              .collection("columns")
+              .doc(column.id)
+              .collection("works")
+              .add(newWork);
+          })
+          .then(() => {
+            this.setState({
+              ...this.initialState,
+            });
+          });
       });
-    // adds the specified first column into the database
-    dbService
-      .collection("users")
-      .doc(authService.currentUser.email)
-      .collection("lists")
-      .doc(this.state.listName)
-      .collection("columns")
-      .doc(this.state.columnName)
-      .set({
-        owner: authService.currentUser.email,
-        title: this.state.columnName,
-      });
-      // Adds the first work in the list
-    dbService
-      .collection("users")
-      .doc(authService.currentUser.email)
-      .collection("lists")
-      .doc(this.state.listName)
-      .collection("columns")
-      .doc(this.state.columnName)
-      .collection("works")
-      .add(newWork);
-    //   .doc(this.state.listName)
-    //   .collection("columns")
-    //   .doc(this.state.columnName)
-    //   .collection("works")
-    //   .add(newWork);
   };
+
+  /**
+   * Sets the dialog state to open when the appropriate icon is
+   * pressed in the ui, and shows the corresponding dialog
+   */
   handleOpen = () => {
     this.setState({ open: true });
   };
+
+  /**
+   * Sets the dialog state to close when the appropriate icon is
+   * pressed in the ui, and closes the corresponding dialog
+   */
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
+
+  /**
+   * @param {event} event Data returned from the notification form
+   *
+   * Data returned from the notification form is different from other data,
+   * so it had to be handled separately. It sets
+   * the notification state to the user's choice in the ui.
+   */
   handleNotificationChange = (event) => {
     this.setState({
       notification: event.target.value,
     });
   };
+
+  /**
+   * Takes care of submitting the form. It calls the addList() function
+   * which adds data in the backend database, and also listAdd() function
+   * which sets the new data in it's parent component's state in order to reflect
+   * the change immediately.
+   */
   handleSubmit = () => {
-    // const workDetails = {
-    //   description: this.state.description,
-    //   dueDate: this.state.dueDate.toISOString(),
-    // };
     this.props.listAdd(this.state.listName);
     this.addList();
-    this.setState({
-      ...this.initialState,
-    });
     this.handleClose();
   };
+
+  /**
+   * @param {event} event Data returned from picking due date with date picker.
+   *
+   * Data returned for due date change is different from other data like filling up a
+   * form, etc, and hence has to be handled separately in order to correctly set the state
+   * accoring to user input.
+   */
   handleDuedateChange = (event) => {
     this.setState({
       dueDate: event,

@@ -3,6 +3,11 @@ import { authService, dbService } from "../functions/util/fbase";
 import NotificationDisplay from "../components/NotificationDisplay";
 class Notification extends Component {
   state = {};
+
+  /**
+   * Retrives all the notification present in the backend, and
+   * sets the state accordingly.
+   */
   grabNotifications = () => {
     dbService
       .collection("users")
@@ -13,19 +18,25 @@ class Notification extends Component {
         let notifications = [];
         data.forEach((doc) => {
           console.log(doc.id);
-          notifications.push(
-            // <NotificationDisplay content={doc.data().content} />
-            {
-              id: doc.id,
-              content: doc.data().content,
-            }
-          );
+          notifications.push({
+            id: doc.id,
+            content: doc.data().content,
+          });
           console.log(notifications);
         });
         this.setState({ notifications });
         return notifications;
       });
   };
+
+  /**
+   *
+   * @param {notification} notification notification to be deleted
+   *
+   * notification to be deleted is idenfieid from the notification array, and
+   * is deleted. New notification array without the deleted notification is
+   * set again in the state.
+   */
   deleteNotification = (notification) => {
     let newNotifications = this.state.notifications;
     let ind = this.state.notifications.indexOf(notification);
@@ -34,6 +45,13 @@ class Notification extends Component {
       notifications: newNotifications,
     });
   };
+
+  /**
+   *
+   * @param {notification} notification notification to be added
+   *
+   * notification is added in the notification array in the state.
+   */
   addNotification = (notification) => {
     this.setState({
       notifications: {
@@ -42,6 +60,11 @@ class Notification extends Component {
       },
     });
   };
+
+  /**
+   * React lifecycle method where it calls grabNotifications() when the component
+   * mounts in order to set the state accordingly.
+   */
   componentDidMount() {
     this.grabNotifications();
   }
@@ -58,12 +81,6 @@ class Notification extends Component {
         <p>You have no notifications</p>
       );
     return notificationList;
-    //     return this.state.notifications ? (
-    //       this.state.notifications
-    //     ) : (
-    //       <p>You have no notifications</p>
-    //     );
-    //   }
   }
 }
 

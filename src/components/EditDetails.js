@@ -44,12 +44,6 @@ const styles = (theme) => ({
   form: {
     textAlign: "center",
   },
-  image: {
-    margin: "20px auto 20ps auto",
-  },
-  pageTitle: {
-    margin: "10px auto 10ps auto",
-  },
   textField: {
     margin: "10px auto 10ps auto",
   },
@@ -57,14 +51,6 @@ const styles = (theme) => ({
     marginTop: 20,
     position: "relative",
     float: "right",
-  },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: "20px",
-  },
-  progress: {
-    position: "absolute",
   },
 });
 class EditDetails extends Component {
@@ -76,12 +62,8 @@ class EditDetails extends Component {
     workId: "",
     notification: 5,
   };
+
   editDetails = (event) => {
-    // if (req.body.description.trim() === "") {
-    //   return res
-    //     .status(400)
-    //     .json({ description: "Description should not be empty" });
-    // }
     const work = dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -108,6 +90,11 @@ class EditDetails extends Component {
         console.error(err);
       });
   };
+
+  /**
+   * @param {work} work Takes in a work from it's parent state
+   * With the given parameter, sets the state accordingly in order for editing process.
+   */
   mapDetailsToState = (work) => {
     this.setState({
       description: work.description,
@@ -117,27 +104,75 @@ class EditDetails extends Component {
       notification: work.notification,
     });
   };
+
+  /**
+   * Sets the dialog state to open when the appropriate icon is
+   * pressed in the ui, and shows the corresponding dialog
+   */
   handleOpen = () => {
     this.setState({ open: true });
     this.mapDetailsToState(this.props.work);
   };
+
+  /**
+   * Sets the dialog state to close when the appropriate icon is
+   * pressed in the ui, and closes the corresponding dialog
+   */
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  /**
+   * When the component mounts during its lifecycle, sets the state
+   * accordingly for deletion process.
+   */
   componentDidMount() {
     const { work } = this.props;
     this.mapDetailsToState(work);
   }
+
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
+
+  /**
+   * @param {event} event Data returned from the notification form
+   *
+   * Data returned from the notification form is different from other data,
+   * so it had to be handled separately. It sets
+   * the notification state to the user's choice in the ui.
+   */
   handleNotificationChange = (event) => {
     this.setState({
       notification: event.target.value,
     });
   };
+
+  /**
+   * @param {event} event Data returned from picking due date with date picker.
+   *
+   * Data returned for due date change is different from other data like filling up a
+   * form, etc, and hence has to be handled separately in order to correctly set the state
+   * accoring to user input.
+   */
+  handleDuedateChange = (event) => {
+    this.setState({
+      dueDate: event.toISOString(),
+    });
+  };
+
+  /**
+   * Takes care of submitting the form. Request is sent to the backend database for editing.
+   * this.props.edit() function is called to reflect immediate change
+   * by making suitable changes in the parent state.
+   */
   handleSubmit = () => {
     this.editDetails();
     console.log(this.state.dueDate);
@@ -150,11 +185,7 @@ class EditDetails extends Component {
     );
     this.handleClose();
   };
-  handleDuedateChange = (event) => {
-    this.setState({
-      dueDate: event.toISOString(),
-    });
-  };
+
   render() {
     const { classes } = this.props;
     return (

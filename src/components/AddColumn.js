@@ -24,10 +24,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
-// const styles = (theme) => ({
-//   ...theme,
-// });
-
 const styles = (theme) => ({
   palette: {
     primary: {
@@ -49,27 +45,12 @@ const styles = (theme) => ({
   form: {
     textAlign: "center",
   },
-  image: {
-    margin: "20px auto 20ps auto",
-  },
-  pageTitle: {
-    margin: "10px auto 10ps auto",
-  },
   textField: {
     margin: "10px auto 10ps auto",
   },
   button: {
-    // marginTop: 0,
     position: "relative",
     float: "left",
-  },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: "20px",
-  },
-  progress: {
-    position: "absolute",
   },
 });
 
@@ -91,25 +72,18 @@ class AddWork extends Component {
     open: false,
     notification: 5,
   };
-  addColumn = async (event) => {
-    // event.preventDefault();
+
+  /**
+   * Takes care of adding the given column to the backend database
+   * along with the first work provided by the user.
+   */
+  addColumn = async () => {
     const newWork = {
       owner: authService.currentUser.email,
       completed: false,
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
     };
-    // dbService
-    //   .collection("users")
-    //   .doc(authService.currentUser.email)
-    //   .collection("lists")
-    //   .doc(this.props.listName)
-    //   .collection("columns")
-    //   .doc(this.state.columnName)
-    //   .set({
-    //     owner: authService.currentUser.email,
-    //     title: this.state.columnName,
-    //   });
     await dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -135,24 +109,59 @@ class AddWork extends Component {
           .doc(this.state.id)
           .collection("works")
           .add(newWork);
+      })
+      .then(() => {
+        this.setState({
+          ...this.initialState,
+        });
       });
   };
+  /**
+   * Sets the dialog state to open when the appropriate icon is
+   * pressed in the ui, and shows the corresponding dialog
+   */
   handleOpen = () => {
     this.setState({ open: true });
   };
+
+  /**
+   * Sets the dialog state to close when the appropriate icon is
+   * pressed in the ui, and closes the corresponding dialog
+   */
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  /**
+   * @param {event} event Data returned from the notification form
+   *
+   * Data returned from the notification form is different from other data,
+   * so it had to be handled separately. It sets
+   * the notification state to the user's choice in the ui.
+   */
   handleNotificationChange = (event) => {
     this.setState({
       notification: event.target.value,
     });
   };
+
+  /**
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
+   */
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
     });
   };
+
+  /**
+   * Takes care of submitting the form. It calls the addColumn() function
+   * which adds data in the backend database, and also addNewColumn() function
+   * which sets the new data in it's parent component's state in order to reflect
+   * the change immediately.
+   */
   handleSubmit = () => {
     const workDetails = {
       description: this.state.description,
@@ -164,11 +173,16 @@ class AddWork extends Component {
     };
     this.props.addNewColumn(column, workDetails);
     this.addColumn();
-    this.setState({
-      ...this.initialState,
-    });
     this.handleClose();
   };
+
+  /**
+   * @param {event} event Data returned from picking due date with date picker.
+   *
+   * Data returned for due date change is different from other data like filling up a
+   * form, etc, and hence has to be handled separately in order to correctly set the state
+   * accoring to user input.
+   */
   handleDuedateChange = (event) => {
     this.setState({
       dueDate: event,
@@ -272,9 +286,9 @@ class AddWork extends Component {
   }
 }
 
-AddWork.propTypes = {
-  addWork: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired,
-};
+// AddWork.propTypes = {
+//   addWork: PropTypes.func.isRequired,
+//   classes: PropTypes.object.isRequired,
+// };
 
 export default withStyles(styles)(AddWork);

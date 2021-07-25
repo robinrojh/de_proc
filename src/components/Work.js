@@ -23,11 +23,21 @@ const styles = {
     objectFit: "cover",
   },
 };
+
+/**
+ * Component responsible for managing how a work would
+ * look like in the ui.
+ */
 class work extends Component {
   state = {
     workId: this.props.work.workId,
     completed: this.props.work.completed,
   };
+
+  /**
+   * Changes the completed state accordingly, in order to reflect chagnes
+   * in the checkbox.
+   */
   handleChange = () => {
     this.state.completed
       ? this.setState({ completed: false })
@@ -72,7 +82,6 @@ class work extends Component {
             />
           </Card>
         </Grid>
-        {/* <Grid item></Grid> */}
       </Grid>
     );
   }

@@ -16,14 +16,22 @@ class Navbar extends Component {
   state = {
     authenticated: false,
   };
+
+  /**
+   * Signs out the user from the database.
+   */
   handleLogout = () => {
     console.log("logout");
     authService.signOut();
-    localStorage.removeItem("authenticated");
     this.setState({
       authenticated: false,
     });
   };
+
+  /**
+   * when the component mounts, checks if the user is authenticated by
+   * checking if the user is logged in.
+   */
   componentDidMount() {
     this.setState({
       authenticated: authService.currentUser,

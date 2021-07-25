@@ -62,32 +62,11 @@ class Dashboard extends Component {
         const lists = [];
         element.docs.forEach((list) => {
           console.log(list.data().title);
-          //   lists.push(list.data().title);
           lists.push({
             id: list.id,
             title: list.data().title,
           });
         });
-        // const componentList = lists.map((element) => {
-        //   return (
-        //     <List listName={element.title} />
-        //     // <Grid item xs={12} key={element.title}>
-        //     //   <Card className={classes.card}>
-        //     //     <CardContent className={classes.content}>
-        //     //       <MuiLink
-        //     //         component={Link}
-        //     //         to={`/lists/${element.title}`}
-        //     //         color="primary"
-        //     //         variant="h5"
-        //     //       >
-        //     //         {element.title}
-        //     //         <hr />
-        //     //       </MuiLink>
-        //     //     </CardContent>
-        //     //   </Card>
-        //     // </Grid>
-        //   );
-        // });
         this.setState({
           listArray: lists,
         });
@@ -148,8 +127,9 @@ class Dashboard extends Component {
   };
 
   /**
-   * Handles the change in the form input
-   * @param {Event} event form input change event
+   * @param {event} event Takes in an event, which is the user filling up a form, etc
+   *
+   * Sets the corresponding form's state according to user's input
    */
   handleChange = (event) => {
     event.preventDefault();
@@ -158,14 +138,29 @@ class Dashboard extends Component {
     });
   };
 
-  deleteList = (listName) => {
+  /**
+   * @param {list} list list which will be deleted.
+   *
+   * list is removed from the list array, and new array without
+   * the deleted list is set again in the state.
+   */
+  deleteList = (list) => {
     let newList = this.state.listArray;
-    let ind = this.state.listArray.indexOf(listName);
+    let ind = this.state.listArray.indexOf(list);
     newList.splice(ind, 1);
     this.setState({
       listArray: newList,
     });
   };
+
+  /**
+   *
+   * @param {listName} listName list to be edited.
+   *
+   * list with the same id as the listName will be identified, and
+   * its title will be set to listName's title, which is the new
+   * title provided by the user.
+   */
   editList = (listName) => {
     let newList = this.state.listArray;
     newList.map((list) => {

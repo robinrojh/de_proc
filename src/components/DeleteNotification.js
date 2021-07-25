@@ -54,6 +54,11 @@ const styles = (theme) => ({
   },
 });
 class DeleteNotification extends Component {
+  /**
+   * Deletes the corresponding notification in the database,
+   * and delete() function updated the parent state accordingly
+   * in order to reflect change immediately.
+   */
   handleSubmit = () => {
     dbService
       .collection("users")
