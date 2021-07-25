@@ -106,7 +106,7 @@ class DeleteColumns extends Component {
       ? this.setState({ [column.id]: { selected: false } })
       : this.setState({ [column.id]: { selected: true } });
   };
-  handleSubmit = () => {
+  handleSubmit = async () => {
     // this.state.columns.forEach((column) => {
     //   console.log(column);
     //   if (this.state[column].selected) {
@@ -122,26 +122,42 @@ class DeleteColumns extends Component {
     const filteredcolumn = this.state.columns.filter(
       (column) => this.state[column.id].selected
     );
-    filteredcolumn.forEach(async (column) => {
-      const columnRef =
-        dbService
-          .collection("users")
-          .doc(authService.currentUser.email)
-          .collection("lists")
-          .doc(this.props.listName)
-          .collection("columns")
-          .doc(column.id);
-
-      await columnRef
+    await filteredcolumn.forEach(async (column) => {
+      console.log(column.id)
+      await dbService
+        .collection("users")
+        .doc(authService.currentUser.email)
+        .collection("lists")
+        .doc(this.props.listName)
+        .collection("columns")
+        .doc(column.id)
         .collection("works")
         .get()
         .then((workSnapshot) => {
           workSnapshot.docs.forEach((work) => {
-            columnRef.collection("works").doc(work.id).delete();
+            dbService
+              .collection("users")
+              .doc(authService.currentUser.email)
+              .collection("lists")
+              .doc(this.props.listName)
+              .collection("columns")
+              .doc(column.id)
+              .collection("works")
+              .doc(work.id).delete();
+            console.log(work)
           })
         })
-      await columnRef.delete();
-      this.props.delete(column.id, column.title);
+      await dbService
+        .collection("users")
+        .doc(authService.currentUser.email)
+        .collection("lists")
+        .doc(this.props.listName)
+        .collection("columns")
+        .doc(column.id).delete()
+        .then(() => {
+          console.log(column.id)
+          this.props.delete(column.id, column.title);
+        });
     });
     console.log(filteredcolumn);
     this.handleClose();
@@ -151,22 +167,22 @@ class DeleteColumns extends Component {
     const columnComponent =
       this.state.columns && this.state.columns.length ? (
         this.state.columns.map((column) => (
-           this.state[column.id] ?
-          <Card>
-            <CardContent className={classes.content}>
-              <Typography color="primary" varian="h4" display="inline">
-                {column.title}
-              </Typography>
-              <Checkbox
-                checked={this.state[column.id].selected}
-                onChange={() => this.handleChange(column)}
-                inputProps={{ "aria-label": "primary checkbox" }}
-                color="primary"
-              />
-            </CardContent>
-          </Card>
-          :
-          <p>Loading</p>
+          this.state[column.id] ?
+            <Card>
+              <CardContent className={classes.content}>
+                <Typography color="primary" varian="h4" display="inline">
+                  {column.title}
+                </Typography>
+                <Checkbox
+                  checked={this.state[column.id].selected}
+                  onChange={() => this.handleChange(column)}
+                  inputProps={{ "aria-label": "primary checkbox" }}
+                  color="primary"
+                />
+              </CardContent>
+            </Card>
+            :
+            <p>Loading</p>
         ))
       ) : (
         <p>Loading</p>

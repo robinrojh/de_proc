@@ -223,7 +223,7 @@ class ListDisplay extends Component {
             value++;
             console.log(column);
             const columnName = this.state.rawColumns.filter(
-              (col) => col.id == column
+              (col) => col.id === column
             )[0];
             console.log(columnName);
             console.log(this.state);
@@ -235,7 +235,7 @@ class ListDisplay extends Component {
                 <Grid item xs>
                   <Typography variant="h6">
                     <Box fontStyle="oblique" fontFamily="Monospace">
-                      {columnName.listName}
+                      {columnName.title}
                     </Box>
                   </Typography>
                   <Paper className={classes.paper}>

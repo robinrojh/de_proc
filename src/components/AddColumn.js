@@ -91,7 +91,7 @@ class AddWork extends Component {
     open: false,
     notification: 5,
   };
-  addColumn = (event) => {
+  addColumn = async (event) => {
     // event.preventDefault();
     const newWork = {
       owner: authService.currentUser.email,
@@ -110,7 +110,7 @@ class AddWork extends Component {
     //     owner: authService.currentUser.email,
     //     title: this.state.columnName,
     //   });
-    dbService
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
