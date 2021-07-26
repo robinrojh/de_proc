@@ -68,14 +68,13 @@ class AddWork extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
-    workStart: 9,
-    workEnd: 17,
+    reloader: null
   };
 
   /**
    * Takes care of adding the given work to the backend database
    */
-  addWork = (event) => {
+  addWork = async (event) => {
     const newWork = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
@@ -84,7 +83,7 @@ class AddWork extends Component {
       notification: this.state.notification,
     };
     // adds a new work to the works subcollection of the current user
-    dbService
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
@@ -144,15 +143,16 @@ class AddWork extends Component {
    * which sets the new data in it's parent component's state in order to reflect
    * the change immediately.
    */
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const newWork = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
     };
-    this.addWork();
+    await this.addWork();
     console.log(this.props.column);
     this.props.add(this.props.columnName, newWork);
     this.handleClose();
+    this.setState({reloader: null})
   };
 
   /**

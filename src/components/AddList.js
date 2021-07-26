@@ -78,13 +78,14 @@ class AddList extends Component {
     notification: 5,
     workStart: 9,
     workEnd: 5,
+    reloader: null
   };
 
   /**
    * Takes care of adding the given list to the backend database
    * along with the first column and work provided by the user.
    */
-  addList = () => {
+  addList = async () => {
     console.log("adding");
     console.log(this.state.listName);
     console.log(this.state.columnName);
@@ -96,7 +97,7 @@ class AddList extends Component {
       notification: this.state.notification,
     };
     // Adds the list to the database
-    dbService
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
@@ -189,9 +190,10 @@ class AddList extends Component {
    * which sets the new data in it's parent component's state in order to reflect
    * the change immediately.
    */
-  handleSubmit = () => {
-    this.addList();
+  handleSubmit = async () => {
+    await this.addList();
     this.handleClose();
+    this.setState({reloader: null})
   };
 
   /**

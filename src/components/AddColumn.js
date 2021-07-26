@@ -71,6 +71,7 @@ class AddWork extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
+    reloader: null
   };
 
   /**
@@ -82,6 +83,7 @@ class AddWork extends Component {
       owner: authService.currentUser.email,
       completed: false,
       description: this.state.description,
+      notification: this.state.notification,
       dueDate: this.state.dueDate.toISOString(),
     };
     await dbService
@@ -182,9 +184,10 @@ class AddWork extends Component {
    * which sets the new data in it's parent component's state in order to reflect
    * the change immediately.
    */
-  handleSubmit = () => {
-    this.addColumn();
+  handleSubmit = async () => {
+    await this.addColumn();
     this.handleClose();
+    this.setState({reloader: null})
   };
 
   /**
