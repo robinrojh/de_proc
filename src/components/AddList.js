@@ -160,7 +160,7 @@ class AddList extends Component {
    * pressed in the ui, and closes the corresponding dialog
    */
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ ...this.initialState });
   };
 
   /**
