@@ -22,6 +22,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { validateAdditionData } from "../functions/util/validators";
 
 const styles = (theme) => ({
   palette: {
@@ -68,6 +69,7 @@ class AddList extends Component {
     notification: 5,
     workStart: 9,
     workEnd: 5,
+    errors: {},
   };
   state = {
     listName: "",
@@ -78,7 +80,8 @@ class AddList extends Component {
     notification: 5,
     workStart: 9,
     workEnd: 5,
-    reloader: null
+    errors: {},
+    reloader: null,
   };
 
   /**
@@ -190,10 +193,25 @@ class AddList extends Component {
    * which sets the new data in it's parent component's state in order to reflect
    * the change immediately.
    */
-  handleSubmit = async () => {
-    await this.addList();
-    this.handleClose();
-    this.setState({reloader: null})
+  handleSubmit = () => {
+    this.setState({
+      errors: {},
+    });
+    const data = {
+      description: this.state.description,
+      columnName: this.state.columnName,
+      listName: this.state.listName,
+    };
+    const { valid, errors } = validateAdditionData(data);
+    if (!valid) {
+      this.setState({
+        errors: { ...errors },
+      });
+    } else {
+      this.addList();
+      this.handleClose();
+      this.setState({ reloader: null });
+    }
   };
 
   /**
@@ -210,6 +228,7 @@ class AddList extends Component {
   };
   render() {
     const { classes } = this.props;
+    const { errors } = this.state;
     return (
       <Fragment>
         <Tooltip title="Add new List" placement="top">
@@ -233,6 +252,8 @@ class AddList extends Component {
                 multiline
                 rows="3"
                 placeholder="List name"
+                error={errors.listName}
+                helperText={errors.listName}
                 className={classes.textfield}
                 value={this.state.listName}
                 onChange={this.handleChange}
@@ -245,6 +266,8 @@ class AddList extends Component {
                 multiline
                 rows="3"
                 placeholder="Column name"
+                error={errors.columnName}
+                helperText={errors.columnName}
                 className={classes.textfield}
                 value={this.state.columnName}
                 onChange={this.handleChange}
@@ -257,6 +280,8 @@ class AddList extends Component {
                 multiline
                 rows="3"
                 placeholder="Work description"
+                error={errors.description}
+                helperText={errors.description}
                 className={classes.textfield}
                 value={this.state.description}
                 onChange={this.handleChange}

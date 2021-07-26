@@ -23,6 +23,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { validateAdditionData } from "../functions/util/validators";
 
 const styles = (theme) => ({
   palette: {
@@ -63,12 +64,24 @@ const styles = (theme) => ({
  * AddWork component is in charge of adding a work to the database.
  */
 class AddWork extends Component {
+  initialState = {
+    description: "",
+    dueDate: new Date(),
+    open: false,
+    notification: 5,
+    workStart: 9,
+    workEnd: 17,
+    errors: {},
+  };
   state = {
     description: "",
     dueDate: new Date(),
     open: false,
     notification: 5,
-    reloader: null
+    workStart: 9,
+    workEnd: 17,
+    errors: {},
+    reloader: null,
   };
 
   /**
@@ -92,6 +105,18 @@ class AddWork extends Component {
       .doc(this.props.columnName)
       .collection("works")
       .add(newWork)
+      .then(() => {
+        const newWork = {
+          description: this.state.description,
+          dueDate: this.state.dueDate.toISOString(),
+        };
+        this.props.add(this.props.columnName, newWork);
+      })
+      .then(() => {
+        this.setState({
+          ...this.initialState,
+        });
+      })
       .catch((err) => {
         console.error(err);
       });
@@ -143,16 +168,23 @@ class AddWork extends Component {
    * which sets the new data in it's parent component's state in order to reflect
    * the change immediately.
    */
-  handleSubmit = async () => {
-    const newWork = {
+  handleSubmit = () => {
+    this.setState({
+      errors: {},
+    });
+    const data = {
       description: this.state.description,
-      dueDate: this.state.dueDate.toISOString(),
     };
-    await this.addWork();
-    console.log(this.props.column);
-    this.props.add(this.props.columnName, newWork);
-    this.handleClose();
-    this.setState({reloader: null})
+    const { valid, errors } = validateAdditionData(data);
+    if (!valid) {
+      this.setState({
+        errors: { ...errors },
+      });
+    } else {
+      this.addWork();
+      this.setState({ reloader: null });
+      this.handleClose();
+    }
   };
 
   /**
@@ -169,6 +201,7 @@ class AddWork extends Component {
   };
   render() {
     const { classes } = this.props;
+    const { errors } = this.state;
     return (
       <Fragment>
         <Tooltip title="Add new work" placement="top">
@@ -194,6 +227,8 @@ class AddWork extends Component {
                 rows="3"
                 placeholder="Work description"
                 className={classes.textfield}
+                error={errors.description}
+                helperText={errors.description}
                 value={this.state.bio}
                 onChange={this.handleChange}
                 fullWidth

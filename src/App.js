@@ -27,7 +27,7 @@ const App = () => {
         .collection("users")
         .doc(authService.currentUser.email)
         .collection("lists")
-        .onSnapshot((listQuerySnapshot) => {
+        .get().then((listQuerySnapshot) => {
           listQuerySnapshot.docs.forEach((listDoc) => {
             if (
               new Date().getHours() < listDoc.data().workStart &&
@@ -64,21 +64,21 @@ const App = () => {
               .collection("users")
               .doc(authService.currentUser.email)
               .collection("lists")
-              .doc(listDoc.data().title)
+              .doc(listDoc.id)
               .collection("columns")
-              .onSnapshot((columnQuerySnapshot) => {
+              .get().then((columnQuerySnapshot) => {
                 columnQuerySnapshot.docs.forEach((columnDoc) => {
+                  console.log(columnDoc.data())
                   // Access work collection
                   dbService
                     .collection("users")
                     .doc(authService.currentUser.email)
                     .collection("lists")
-                    .doc(listDoc.data().title)
+                    .doc(listDoc.id)
                     .collection("columns")
                     .doc(columnDoc.id)
                     .collection("works")
-                    .onSnapshot((workQuerySnapshot) => {
-                      console.log(workQuerySnapshot.docs)
+                    .get().then((workQuerySnapshot) => {
                       workQuerySnapshot.docs.forEach((workDoc) => {
                         console.log(workDoc.data())
                         const dueDate = new Date(workDoc.data().dueDate);

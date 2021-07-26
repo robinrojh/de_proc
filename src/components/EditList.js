@@ -54,7 +54,7 @@ const styles = (theme) => ({
 });
 
 class EditList extends Component {
-  state = {};
+  state = { error: false };
 
   /**
    * @param {columns} columns Takes in a list of columns from it's parent state
@@ -134,23 +134,36 @@ class EditList extends Component {
     const filteredlist = this.state.lists.filter(
       (list) => this.state[list.id].edited
     );
-    filteredlist.forEach((list) => {
-      console.log(list);
-      dbService
-        .collection("users")
-        .doc(authService.currentUser.email)
-        .collection("lists")
-        .doc(this.state[list.id].id)
-        .update({
-          owner: authService.currentUser.email,
-          title: this.state[list.id].title,
-        })
-        .then(() => {
-          this.props.edit(this.state[list.id]);
-        });
-    });
-    console.log(filteredlist);
-    this.handleClose();
+    // filteredlist.forEach((list) => {
+    //   if (!this.state[list.id].title) {
+    //     this.setState({
+    //       [list.id]: {
+    //         ...this.state[list.id],
+    //         error: "Must not be empty",
+    //       },
+    //       error: true,
+    //     });
+    //   }
+    // });
+    if (!this.state.error) {
+      filteredlist.forEach((list) => {
+        console.log(list);
+        dbService
+          .collection("users")
+          .doc(authService.currentUser.email)
+          .collection("lists")
+          .doc(this.state[list.id].id)
+          .update({
+            owner: authService.currentUser.email,
+            title: this.state[list.id].title,
+          })
+          .then(() => {
+            this.props.edit(this.state[list.id]);
+          });
+      });
+      console.log(filteredlist);
+      this.handleClose();
+    }
   };
   render() {
     const { classes } = this.props;
@@ -165,6 +178,8 @@ class EditList extends Component {
               type="text"
               label={list.title}
               placeholder="Work description"
+              error={this.state[list.id].error}
+              helperText={this.state[list.id].error}
               className={classes.textfield}
               value={this.state[list.id].title}
               onChange={this.handleChange}
@@ -189,7 +204,10 @@ class EditList extends Component {
           maxWidth="sm"
         >
           <DialogTitle>Edit your list names</DialogTitle>
-          <DialogContent>{listComponent}</DialogContent>
+          <DialogContent>
+            <h2>***DO NOT LEAVE ANY LIST NAMES EMPTY***</h2>
+            {listComponent}
+          </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel

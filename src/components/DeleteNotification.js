@@ -59,8 +59,8 @@ class DeleteNotification extends Component {
    * and delete() function updated the parent state accordingly
    * in order to reflect change immediately.
    */
-  handleSubmit = () => {
-    dbService
+  handleSubmit = async () => {
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("notification")

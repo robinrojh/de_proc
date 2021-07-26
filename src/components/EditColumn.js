@@ -208,7 +208,10 @@ class EditColumn extends Component {
           maxWidth="sm"
         >
           <DialogTitle>Edit your column names</DialogTitle>
-          <DialogContent>{columnComponent}</DialogContent>
+          <DialogContent>
+            <h3>***DO NOT LEAVE ANY COLUMN NAMES EMPTY***</h3>
+            {columnComponent}
+          </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel
