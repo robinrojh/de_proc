@@ -13,30 +13,14 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
 class Navbar extends Component {
-  state = {
-    authenticated: false,
-  };
-
   /**
    * Signs out the user from the database.
    */
   handleLogout = () => {
     console.log("logout");
     authService.signOut();
-    this.setState({
-      authenticated: false,
-    });
   };
 
-  /**
-   * when the component mounts, checks if the user is authenticated by
-   * checking if the user is logged in.
-   */
-  componentDidMount() {
-    this.setState({
-      authenticated: authService.currentUser,
-    });
-  }
   render() {
     return (
       <AppBar>
