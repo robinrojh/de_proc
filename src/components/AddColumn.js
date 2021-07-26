@@ -23,6 +23,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { validateAdditionData } from "../functions/util/validators";
 
 const styles = (theme) => ({
   palette: {
@@ -64,6 +65,7 @@ class AddWork extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
+    errors: {},
   };
   state = {
     columnName: "",
@@ -71,6 +73,7 @@ class AddWork extends Component {
     dueDate: new Date(),
     open: false,
     notification: 5,
+    errors: {},
   };
 
   /**
@@ -183,8 +186,23 @@ class AddWork extends Component {
    * the change immediately.
    */
   handleSubmit = () => {
-    this.addColumn();
-    this.handleClose();
+    this.setState({
+      errors: {},
+    });
+    const data = {
+      description: this.state.description,
+      columnName: this.state.columnName,
+      listName: this.state.listName,
+    };
+    const { valid, errors } = validateAdditionData(data);
+    if (!valid) {
+      this.setState({
+        errors: { ...errors },
+      });
+    } else {
+      this.addColumn();
+      this.handleClose();
+    }
   };
 
   /**
@@ -201,6 +219,7 @@ class AddWork extends Component {
   };
   render() {
     const { classes } = this.props;
+    const { errors } = this.state;
     return (
       <Fragment>
         <Tooltip title="Add new column" placement="top">
@@ -224,6 +243,8 @@ class AddWork extends Component {
                 multiline
                 rows="3"
                 placeholder="Column name"
+                error={errors.columnName ? true : false}
+                helperText={errors.columnName}
                 className={classes.textfield}
                 value={this.state.columnName}
                 onChange={this.handleChange}
@@ -236,6 +257,8 @@ class AddWork extends Component {
                 multiline
                 rows="3"
                 placeholder="Work description"
+                error={errors.description}
+                helperText={errors.description}
                 className={classes.textfield}
                 value={this.state.description}
                 onChange={this.handleChange}

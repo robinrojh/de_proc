@@ -49,3 +49,14 @@ export const validateLoginData = (data) => {
     valid: Object.keys(errors).length === 0 ? true : false,
   };
 };
+
+export const validateAdditionData = (data) => {
+  let errors = {};
+  if (isEmpty(data.columnName)) errors.columnName = "Must not be empty";
+  if (isEmpty(data.listName)) errors.listName = "Must not be empty";
+  if (isEmpty(data.description)) errors.description = "Must not be empty";
+  return {
+    errors,
+    valid: Object.keys(errors).length === 0 ? true : false,
+  };
+};

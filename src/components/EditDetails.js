@@ -22,6 +22,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { validateAdditionData } from "../functions/util/validators";
 
 const styles = (theme) => ({
   palette: {
@@ -61,6 +62,7 @@ class EditDetails extends Component {
     open: false,
     workId: "",
     notification: 5,
+    error: {},
   };
 
   editDetails = (event) => {
@@ -183,14 +185,24 @@ class EditDetails extends Component {
    * by making suitable changes in the parent state.
    */
   handleSubmit = () => {
-    this.editDetails();
-    console.log(this.state.dueDate);
-
-    this.handleClose();
+    this.setState({ error: {} });
+    const data = {
+      description: this.state.description,
+    };
+    const { valid, errors } = validateAdditionData(data);
+    if (!valid) {
+      this.setState({
+        error: { ...errors },
+      });
+    } else {
+      this.editDetails();
+      this.handleClose();
+    }
   };
 
   render() {
     const { classes } = this.props;
+    const { error } = this.state;
     return (
       <Fragment>
         <Tooltip title="Edit your work" placement="top">
@@ -214,6 +226,8 @@ class EditDetails extends Component {
                 multiline
                 rows="3"
                 placeholder="Work description"
+                error={error.description}
+                helperText={error.description}
                 className={classes.textfield}
                 value={this.state.description}
                 onChange={this.handleChange}
