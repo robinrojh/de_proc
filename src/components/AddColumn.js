@@ -74,6 +74,7 @@ class AddWork extends Component {
     open: false,
     notification: 5,
     errors: {},
+    reloader: null,
   };
 
   /**
@@ -85,6 +86,7 @@ class AddWork extends Component {
       owner: authService.currentUser.email,
       completed: false,
       description: this.state.description,
+      notification: this.state.notification,
       dueDate: this.state.dueDate.toISOString(),
     };
     await dbService
@@ -202,6 +204,7 @@ class AddWork extends Component {
     } else {
       this.addColumn();
       this.handleClose();
+      this.setState({ reloader: null });
     }
   };
 

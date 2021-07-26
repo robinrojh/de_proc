@@ -81,13 +81,14 @@ class AddList extends Component {
     workStart: 9,
     workEnd: 5,
     errors: {},
+    reloader: null,
   };
 
   /**
    * Takes care of adding the given list to the backend database
    * along with the first column and work provided by the user.
    */
-  addList = () => {
+  addList = async () => {
     console.log("adding");
     console.log(this.state.listName);
     console.log(this.state.columnName);
@@ -99,7 +100,7 @@ class AddList extends Component {
       notification: this.state.notification,
     };
     // Adds the list to the database
-    dbService
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
@@ -209,6 +210,7 @@ class AddList extends Component {
     } else {
       this.addList();
       this.handleClose();
+      this.setState({ reloader: null });
     }
   };
 

@@ -81,12 +81,13 @@ class AddWork extends Component {
     workStart: 9,
     workEnd: 17,
     errors: {},
+    reloader: null,
   };
 
   /**
    * Takes care of adding the given work to the backend database
    */
-  addWork = (event) => {
+  addWork = async (event) => {
     const newWork = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
@@ -95,7 +96,7 @@ class AddWork extends Component {
       notification: this.state.notification,
     };
     // adds a new work to the works subcollection of the current user
-    dbService
+    await dbService
       .collection("users")
       .doc(authService.currentUser.email)
       .collection("lists")
@@ -181,6 +182,7 @@ class AddWork extends Component {
       });
     } else {
       this.addWork();
+      this.setState({ reloader: null });
       this.handleClose();
     }
   };
