@@ -27,7 +27,7 @@ const App = () => {
         .collection("users")
         .doc(authService.currentUser.email)
         .collection("lists")
-        .get().then((listQuerySnapshot) => {
+        .onSnapshot((listQuerySnapshot) => {
           listQuerySnapshot.docs.forEach((listDoc) => {
             if (
               new Date().getHours() < listDoc.data().workStart &&
@@ -66,7 +66,7 @@ const App = () => {
               .collection("lists")
               .doc(listDoc.id)
               .collection("columns")
-              .get().then((columnQuerySnapshot) => {
+              .onSnapshot((columnQuerySnapshot) => {
                 columnQuerySnapshot.docs.forEach((columnDoc) => {
                   console.log(columnDoc.data())
                   // Access work collection
@@ -78,7 +78,7 @@ const App = () => {
                     .collection("columns")
                     .doc(columnDoc.id)
                     .collection("works")
-                    .get().then((workQuerySnapshot) => {
+                    .onSnapshot((workQuerySnapshot) => {
                       workQuerySnapshot.docs.forEach((workDoc) => {
                         console.log(workDoc.data())
                         const dueDate = new Date(workDoc.data().dueDate);
@@ -86,6 +86,7 @@ const App = () => {
                         dueDate.setMinutes(
                           dueDate.getMinutes() - notificationTiming
                         );
+                        dueDate.setSeconds(0);
                         if (dueDate > new Date() && !workDoc.data().completed) {
                           console.log('notif success')
                           new cron.CronJob(dueDate, () => {
