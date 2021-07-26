@@ -55,7 +55,7 @@ const styles = (theme) => ({
 });
 class DeleteWork extends Component {
   /**
-   * Deletes the corresponding 재가 in the database,
+   * Deletes the corresponding work in the database,
    * and delete() function updated the parent state accordingly
    * in order to reflect change immediately.
    */
@@ -69,8 +69,10 @@ class DeleteWork extends Component {
       .doc(this.props.columnName)
       .collection("works")
       .doc(this.props.work.workId)
-      .delete();
-    this.props.delete(this.props.columnName, this.props.work);
+      .delete()
+      .then(() => {
+        this.props.delete(this.props.columnName, this.props.work);
+      });
   };
   render() {
     const { classes } = this.props;

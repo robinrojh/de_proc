@@ -84,7 +84,7 @@ class AddList extends Component {
    * Takes care of adding the given list to the backend database
    * along with the first column and work provided by the user.
    */
-  addList = (event) => {
+  addList = () => {
     console.log("adding");
     console.log(this.state.listName);
     console.log(this.state.columnName);
@@ -93,6 +93,7 @@ class AddList extends Component {
       dueDate: this.state.dueDate.toISOString(),
       owner: authService.currentUser.email,
       completed: false,
+      notification: this.state.notification,
     };
     // Adds the list to the database
     dbService
@@ -130,6 +131,9 @@ class AddList extends Component {
               .doc(column.id)
               .collection("works")
               .add(newWork);
+          })
+          .then(() => {
+            this.props.listAdd(this.state.listName);
           })
           .then(() => {
             this.setState({
@@ -186,7 +190,6 @@ class AddList extends Component {
    * the change immediately.
    */
   handleSubmit = () => {
-    this.props.listAdd(this.state.listName);
     this.addList();
     this.handleClose();
   };

@@ -86,6 +86,15 @@ class EditDetails extends Component {
         console.log(modifiedWork);
         work.update(modifiedWork);
       })
+      .then(() => {
+        this.props.edit(
+          this.state.description,
+          this.state.dueDate,
+          this.state.notification,
+          this.props.work,
+          this.props.columnName
+        );
+      })
       .catch((err) => {
         console.error(err);
       });
@@ -176,13 +185,7 @@ class EditDetails extends Component {
   handleSubmit = () => {
     this.editDetails();
     console.log(this.state.dueDate);
-    this.props.edit(
-      this.state.description,
-      this.state.dueDate,
-      this.state.notification,
-      this.props.work,
-      this.props.columnName
-    );
+
     this.handleClose();
   };
 

@@ -250,25 +250,26 @@ class ListDisplay extends Component {
         this.state.columns && this.state.columns.length ? (
           this.state.columns.map((column) => {
             console.log(this.state);
-            let workList = this.state[column] ? (
-              this.state[column].map((works) => {
-                return (
-                  <Work
-                    work={works}
-                    key={works.workId}
-                    edit={this.editWork}
-                    delete={this.deleteWork}
-                    listName={this.state.listName}
-                    columnName={column}
-                  />
-                );
-              })
-            ) : (
-              <p>
-                You have no columns. Create one by pressing the icon on the top
-                left corner.
-              </p>
-            );
+            let workList =
+              this.state[column] && this.state[column].length ? (
+                this.state[column].map((works) => {
+                  return (
+                    <Work
+                      work={works}
+                      key={works.workId}
+                      edit={this.editWork}
+                      delete={this.deleteWork}
+                      listName={this.state.listName}
+                      columnName={column}
+                    />
+                  );
+                })
+              ) : (
+                <p>
+                  Your column has no work. Add one by clicking the + icon on the
+                  bottom left corner.
+                </p>
+              );
             value++;
             console.log(column);
             const columnName = this.state.rawColumns.filter(

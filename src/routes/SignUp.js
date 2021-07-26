@@ -1,5 +1,4 @@
-import React from "react";
-import axios from "axios";
+import { React, Component } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -10,6 +9,7 @@ import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 import AppIcon from "../images/icon.jpg";
 import { authService, dbService } from "../functions/util/fbase";
+import { validateSignUpData } from "../functions/util/validators";
 
 const styles = {
   form: {
@@ -41,17 +41,14 @@ const styles = {
   },
 };
 
-class SignUp extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: "",
-      confirmPassword: "",
-      nickname: "",
-      errors: {},
-    };
-  }
+class SignUp extends Component {
+  state = {
+    email: "",
+    password: "",
+    confirmPassword: "",
+    nickname: "",
+    errors: {},
+  };
 
   /**
    * @param {event} event Takes in an event, which is the user filling up a form, etc
@@ -68,21 +65,49 @@ class SignUp extends React.Component {
    * Creates a new user in the backend database with
    * email and passwork provided by the user.
    */
-  handleSubmit = async () => {
+  handleSubmit = async (event) => {
+    event.preventDefault();
     this.setState({
+      errors: {},
       loading: true,
     });
-    try {
-      await authService.createUserWithEmailAndPassword(
-        this.state.email,
-        this.state.password
-      );
-      const userObj = {
-        email: this.state.email,
-        nickname: this.state.nickname,
-      };
-      await dbService.collection("users").doc(this.state.email).set(userObj);
-    } catch (error) {}
+    const userObj = {
+      email: this.state.email,
+      password: this.state.password,
+      confirmPassword: this.state.confirmPassword,
+      nickname: this.state.nickname,
+    };
+    const { valid, errors } = validateSignUpData(userObj);
+    if (!valid) {
+      this.setState({
+        errors: { ...errors },
+      });
+    } else {
+      try {
+        await authService.createUserWithEmailAndPassword(
+          this.state.email,
+          this.state.password
+        );
+
+        await dbService.collection("users").doc(this.state.email).set(userObj);
+      } catch (error) {
+        if (error.code === "auth/email-already-in-use") {
+          this.setState({
+            errors: {
+              email: "Email already in use",
+            },
+            loading: false,
+          });
+        } else {
+          this.setState({
+            errors: {
+              general: "Something went wrong, please try again",
+            },
+            loading: false,
+          });
+        }
+      }
+    }
   };
 
   //   setAuthorizationHeader = (token) => {
@@ -140,14 +165,14 @@ class SignUp extends React.Component {
               fullWidth
             />
             <TextField
-              id="handle"
-              name="handle"
-              type="handle"
-              label="Handle"
+              id="nickname"
+              name="nickname"
+              type="nickname"
+              label="Nickname"
               className={classes.textField}
-              helperText={errors.handle}
-              error={errors.handle ? true : false}
-              value={this.state.handle}
+              helperText={errors.nickname}
+              error={errors.nickname ? true : false}
+              value={this.state.nickname}
               onChange={this.handleChange}
               fullWidth
             />

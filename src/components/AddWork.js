@@ -241,7 +241,7 @@ class AddWork extends Component {
                 <MenuItem value={15}>15 minutes</MenuItem>
               </Select>
             </FormControl>
-            <FormControl className={classes.formControl}>
+            {/* <FormControl className={classes.formControl}>
               <InputLabel id="workHour">Work hours</InputLabel>
               <Select
                 labelId="workStart"
@@ -275,7 +275,7 @@ class AddWork extends Component {
                 <MenuItem value={23}>11 pm</MenuItem>
                 <MenuItem value={24}>12 am</MenuItem>
               </Select>
-            </FormControl>
+            </FormControl> */}
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">

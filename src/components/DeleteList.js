@@ -148,9 +148,11 @@ class DeleteList extends Component {
               });
             columnRef.delete();
           });
+        })
+        .then(() => {
+          this.props.delete(list);
         });
       await listRef.delete();
-      this.props.delete(list);
     });
     console.log(filteredlist);
     this.handleClose();

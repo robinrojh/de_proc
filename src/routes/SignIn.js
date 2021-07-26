@@ -1,4 +1,4 @@
-import React from "react";
+import { React, Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -9,6 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { authService } from "../functions/util/fbase";
+import { validateLoginData } from "../functions/util/validators";
 
 const styles = {
   form: {
@@ -40,17 +41,19 @@ const styles = {
   },
 };
 
-class SignIn extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: "",
-      loading: false,
-      errors: {},
-    };
-  }
+class SignIn extends Component {
+  state = {
+    email: "",
+    password: "",
+    loading: false,
+    errors: {},
+  };
 
+  componentDidMount() {
+    this.setState({
+      errors: {},
+    });
+  }
   /**
    * @param {event} event Takes in an event, which is the user filling up a form, etc
    *
@@ -65,25 +68,49 @@ class SignIn extends React.Component {
   /**
    * Authorize/login a user if the user is registered in the database.
    */
-  handleSubmit = async () => {
+  handleSubmit = async (event) => {
     this.setState({
+      errors: {},
       loading: true,
     });
-    this.setState({
-      loading: true,
-    });
-    try {
-      await authService.signInWithEmailAndPassword(
-        this.state.email,
-        this.state.password
-      );
-      this.props.history.push("/Dashboard");
-    } catch (error) {}
+    console.log(this.state);
+    event.preventDefault();
+    const user = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+    const { valid, errors } = validateLoginData(user);
+    if (!valid) {
+      this.setState({
+        errors: {
+          ...errors,
+        },
+        loading: false,
+      });
+    } else {
+      try {
+        await authService.signInWithEmailAndPassword(
+          this.state.email,
+          this.state.password
+        );
+        this.setState({
+          loading: false,
+        });
+        // this.props.history.push("/Dashboard");
+      } catch (error) {
+        this.setState({
+          errors: {
+            general: "Wrong credentials, please try again.",
+          },
+          loading: false,
+        });
+      }
+    }
   };
 
   render() {
-    const { classes, loading } = this.props;
-    const { errors } = this.state;
+    const { classes } = this.props;
+    const { errors, loading } = this.state;
     return (
       <Grid container className={classes.form}>
         <Grid item sm />

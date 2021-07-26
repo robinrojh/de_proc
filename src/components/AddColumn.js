@@ -108,7 +108,27 @@ class AddWork extends Component {
           .collection("columns")
           .doc(this.state.id)
           .collection("works")
-          .add(newWork);
+          .add(newWork)
+          .then((doc) => {
+            this.setState({
+              workId: doc.id,
+            });
+          });
+      })
+      .then(() => {
+        const workDetails = {
+          description: this.state.description,
+          dueDate: this.state.dueDate.toISOString(),
+          owner: authService.currentUser.email,
+          workId: this.state.workId,
+          notification: this.state.notification,
+          completed: false,
+        };
+        const column = {
+          id: this.state.id,
+          title: this.state.columnName,
+        };
+        this.props.addNewColumn(column, workDetails);
       })
       .then(() => {
         this.setState({
@@ -163,15 +183,6 @@ class AddWork extends Component {
    * the change immediately.
    */
   handleSubmit = () => {
-    const workDetails = {
-      description: this.state.description,
-      dueDate: this.state.dueDate.toISOString(),
-    };
-    const column = {
-      id: this.state.id,
-      title: this.state.columnName,
-    };
-    this.props.addNewColumn(column, workDetails);
     this.addColumn();
     this.handleClose();
   };

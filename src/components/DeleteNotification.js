@@ -65,8 +65,10 @@ class DeleteNotification extends Component {
       .doc(authService.currentUser.email)
       .collection("notification")
       .doc(this.props.notification.id)
-      .delete();
-    this.props.delete(this.props.content);
+      .delete()
+      .then(() => {
+        this.props.delete(this.props.content);
+      });
   };
   render() {
     const { classes } = this.props;

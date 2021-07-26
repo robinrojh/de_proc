@@ -144,8 +144,10 @@ class EditList extends Component {
         .update({
           owner: authService.currentUser.email,
           title: this.state[list.id].title,
+        })
+        .then(() => {
+          this.props.edit(this.state[list.id]);
         });
-      this.props.edit(this.state[list.id]);
     });
     console.log(filteredlist);
     this.handleClose();

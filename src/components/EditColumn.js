@@ -147,8 +147,13 @@ class EditColumn extends Component {
         .update({
           owner: authService.currentUser.email,
           title: this.state[column.id].title,
+        })
+        .then(() => {
+          this.props.edit(
+            this.state[column.id].id,
+            this.state[column.id].title
+          );
         });
-      this.props.edit(this.state[column.id].id, this.state[column.id].title);
     });
     console.log(filteredcolumn);
     this.handleClose();
