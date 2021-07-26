@@ -67,7 +67,9 @@ const styles = (theme) => ({
 });
 
 class DeleteColumns extends Component {
-  state = {};
+  state = {
+    columns: []
+  };
 
   /**
    * @param {columns} columns Takes in a list of columns from it's parent state
