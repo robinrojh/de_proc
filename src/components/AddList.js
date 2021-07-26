@@ -244,6 +244,10 @@ class AddList extends Component {
         >
           <DialogTitle>Add a column for your new list!!</DialogTitle>
           <DialogContent>
+            <h5>
+              Notification setting decides how many minutes beforehand you would
+              like to receive your notification before the due date
+            </h5>
             <form>
               <TextField
                 name="listName"
@@ -316,7 +320,7 @@ class AddList extends Component {
               </Grid>
             </MuiPickersUtilsProvider>
             <FormControl className={classes.formControl}>
-              <InputLabel id="notification">Notification settings</InputLabel>
+              <InputLabel id="notification">Notification setting</InputLabel>
               <Select
                 labelId="notification"
                 id="notification"
