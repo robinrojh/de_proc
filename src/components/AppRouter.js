@@ -1,4 +1,4 @@
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import Home from "../routes/Home";
 import SignIn from "../routes/SignIn";
 import SignUp from "../routes/SignUp";
@@ -28,7 +28,7 @@ const AppRouter = ({ isLoggedIn }) => {
         .onSnapshot((listQuerySnapshot) => {
           listQuerySnapshot.docs.forEach((listDoc) => {
             if (
-              new Date().getHours() <= listDoc.data().workStart &&
+              new Date().getHours() < listDoc.data().workStart &&
               new Date().getMinutes() < 45
             ) {
               // Send notification 15 minutes before work hour begins
@@ -121,8 +121,9 @@ const AppRouter = ({ isLoggedIn }) => {
           <Navbar authenticated={isLoggedIn} />
           <div className="container">
             <Switch>
-              {isLoggedIn ? (
+              {authService.currentUser ? (
                 <>
+                  <Route exact path="/" />
                   <Route exact path="/dashboard" component={Dashboard} />
                   <Route
                     exact
@@ -134,15 +135,10 @@ const AppRouter = ({ isLoggedIn }) => {
                 </>
               ) : (
                 <>
-                  <Route exact path="/" component={SignIn} />
+                  <Route exact path="/" />
                   <Route exact path="/signin" component={SignIn} />
                   <Route exact path="/signup" component={SignUp} />
-                  <Route
-                    exact
-                    path="/lists/:listTitle"
-                    component={ListDisplay}
-                  />
-                  {/* <Route exact path="/list" component={List} /> */}
+                  <Redirect to="/signin" exact></Redirect>
                 </>
               )}
             </Switch>

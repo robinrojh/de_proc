@@ -162,7 +162,7 @@ class AddWork extends Component {
    * which sets the new data in it's parent component's state in order to reflect
    * the change immediately.
    */
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const workDetails = {
       description: this.state.description,
       dueDate: this.state.dueDate.toISOString(),
@@ -172,7 +172,7 @@ class AddWork extends Component {
       title: this.state.columnName,
     };
     this.props.addNewColumn(column, workDetails);
-    this.addColumn();
+    await this.addColumn();
     this.handleClose();
   };
 

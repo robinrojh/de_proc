@@ -65,20 +65,19 @@ class SignIn extends React.Component {
   /**
    * Authorize/login a user if the user is registered in the database.
    */
-  handleSubmit = async () => {
+  handleSubmit = async (event) => {
+    event.preventDefault();
     this.setState({
       loading: true,
     });
-    this.setState({
-      loading: true,
-    });
-    try {
-      await authService.signInWithEmailAndPassword(
-        this.state.email,
-        this.state.password
-      );
+    await authService.signInWithEmailAndPassword(
+      this.state.email,
+      this.state.password
+    ).then(() => {
       this.props.history.push("/Dashboard");
-    } catch (error) {}
+    }).catch((error) => {
+      console.error(error);
+    });
   };
 
   render() {

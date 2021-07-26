@@ -170,7 +170,6 @@ class ListDisplay extends Component {
     this.setState({
       listName: title,
     });
-    let countOfOverdueWorks = 0;
     await dbService
       .collection("users")
       .doc(authService.currentUser.email)
@@ -208,9 +207,6 @@ class ListDisplay extends Component {
                   notification: doc.data().notification,
                   workId: doc.id,
                 });
-                if (new Date(doc.data().dueDate) <= new Date()) {
-                  countOfOverdueWorks++;
-                }
               });
               // new Notification(
               //   "You have " + countOfOverdueWorks + " tasks overdue!"

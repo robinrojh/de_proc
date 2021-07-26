@@ -68,7 +68,8 @@ class SignUp extends React.Component {
    * Creates a new user in the backend database with
    * email and passwork provided by the user.
    */
-  handleSubmit = async () => {
+  handleSubmit = async (event) => {
+    event.preventDefault();
     this.setState({
       loading: true,
     });
